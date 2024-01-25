@@ -24,6 +24,12 @@
             <artifactId>aws-lambda-java-core</artifactId>
             <version>1.2.0</version>
         </dependency>
+        <!--Syndicate annotations-->
+        <dependency>
+            <groupId>net.sf.aws-syndicate</groupId>
+            <artifactId>deployment-configuration-annotations</artifactId>
+            <version>${deployment-configuration-annotations.version}</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-lambda-java-events -->
         <dependency>
             <groupId>com.amazonaws</groupId>

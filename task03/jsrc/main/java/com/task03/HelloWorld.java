@@ -1,4 +1,4 @@
-package com.lambdaapigateway;
+package com.task03;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
