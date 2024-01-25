@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @LambdaHandler(
         lambdaName = "sqs_handler",
-        roleName = "sqs_handler-role",
+        roleName = "sqs_handler-role"
 )
 @SqsTriggerEventSource(targetQueue = "async_queue", batchSize = 1)
 public class SqsHandler implements RequestHandler<SQSEvent, String> {
