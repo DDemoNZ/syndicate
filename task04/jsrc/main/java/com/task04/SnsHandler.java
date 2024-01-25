@@ -13,20 +13,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@LambdaHandler(lambdaName = "sns_handler",
-	roleName = "sns_handler-role",
-	isPublishVersion = true,
-	aliasName = "${lambdas_alias_name}"
+@LambdaHandler(
+        lambdaName = "sns_handler",
+        roleName = "sns_handler-role"
 )
-@SnsEventSource(targetTopic = "lambda_topic")
-public class SnsHandler implements RequestHandler<SNSEvent, String> {
+@SnsEventSource(
+        targetTopic = "lambda_topic"
+)
+public class SnsHandler implements RequestHandler<SNSEvent, Void> {
 
-	public String handleRequest(SNSEvent request, Context context) {
-		LambdaLogger logger = context.getLogger();
-		request.getRecords().forEach(snsRecord -> logger.log(snsRecord.getSNS().getMessage()));
-		return request.getRecords().stream()
-				.map(SNSEvent.SNSRecord::getSNS)
-				.map(SNSEvent.SNS::getMessage)
-				.collect(Collectors.joining(" "));
-	}
+    public Void handleRequest(SNSEvent request, Context context) {
+        LambdaLogger logger = context.getLogger();
+        request.getRecords().forEach(snsRecord -> logger.log(snsRecord.getSNS().getMessage()));
+        return null;
+    }
 }

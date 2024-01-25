@@ -15,14 +15,15 @@ import java.util.stream.Collectors;
         lambdaName = "sqs_handler",
         roleName = "sqs_handler-role"
 )
-@SqsTriggerEventSource(targetQueue = "async_queue", batchSize = 1)
-public class SqsHandler implements RequestHandler<SQSEvent, String> {
+@SqsTriggerEventSource(
+        targetQueue = "async_queue",
+        batchSize = 1
+)
+public class SqsHandler implements RequestHandler<SQSEvent, Void> {
 
-    public String handleRequest(SQSEvent request, Context context) {
+    public Void handleRequest(SQSEvent request, Context context) {
         LambdaLogger logger = context.getLogger();
         request.getRecords().forEach(sqsMessage -> logger.log(sqsMessage.getBody()));
-        return request.getRecords().stream()
-                .map(SQSEvent.SQSMessage::getBody)
-                .collect(Collectors.joining(" "));
+        return null;
     }
 }
