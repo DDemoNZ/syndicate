@@ -1,0 +1,5 @@
+.syndicate
+logs/
+.syndicate-config-lambda_api_gateway/
+target
+.idea/
