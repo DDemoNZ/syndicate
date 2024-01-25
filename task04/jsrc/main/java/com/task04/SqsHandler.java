@@ -11,19 +11,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@LambdaHandler(lambdaName = "sqs_handler",
-	roleName = "sqs_handler-role",
-	isPublishVersion = true,
-	aliasName = "${lambdas_alias_name}"
+@LambdaHandler(
+        lambdaName = "sqs_handler",
+        roleName = "sqs_handler-role",
 )
 @SqsTriggerEventSource(targetQueue = "async_queue", batchSize = 1)
 public class SqsHandler implements RequestHandler<SQSEvent, String> {
 
-	public String handleRequest(SQSEvent request, Context context) {
-		LambdaLogger logger = context.getLogger();
-		request.getRecords().forEach(sqsMessage -> logger.log(sqsMessage.getBody()));
-		return request.getRecords().stream()
-				.map(SQSEvent.SQSMessage::getBody)
-				.collect(Collectors.joining(" "));
-	}
+    public String handleRequest(SQSEvent request, Context context) {
+        LambdaLogger logger = context.getLogger();
+        request.getRecords().forEach(sqsMessage -> logger.log(sqsMessage.getBody()));
+        return request.getRecords().stream()
+                .map(SQSEvent.SQSMessage::getBody)
+                .collect(Collectors.joining(" "));
+    }
 }
