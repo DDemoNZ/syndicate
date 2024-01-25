@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 )
 @SqsTriggerEventSource(
         targetQueue = "async_queue",
-        batchSize = 1
+        batchSize = 10
 )
 public class SqsHandler implements RequestHandler<SQSEvent, Void> {
 
