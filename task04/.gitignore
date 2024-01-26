@@ -2,3 +2,4 @@
 logs/
 .idea
 .syndicate-config-sqs_sns_lambdas_handlers
+target
