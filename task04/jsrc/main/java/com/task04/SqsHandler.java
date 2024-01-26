@@ -15,13 +15,14 @@ import java.util.stream.Collectors;
 
 @LambdaHandler(
         lambdaName = "sqs_handler",
-        roleName = "sqs_handler-role"
+        roleName = "sqs_handler-role",
+        timeout = 30
 )
 @SqsTriggerEventSource(
         targetQueue = "async_queue",
         batchSize = 10
 )
-@DependsOn(resourceType = ResourceType.SNS_TOPIC, name = "async_queue")
+@DependsOn(resourceType = ResourceType.SQS_QUEUE, name = "async_queue")
 public class SqsHandler implements RequestHandler<SQSEvent, Void> {
 
     public Void handleRequest(SQSEvent request, Context context) {
