@@ -15,6 +15,7 @@
             "ssm:PutParameter",
             "ssm:GetParameter",
             "kms:Decrypt",
+            "lambda:CreateEventSourceMapping",
             "sqs:*"
           ],
           "Effect": "Allow",
