@@ -1,0 +1,5 @@
+.syndicate
+target/
+.syndicate-config-lambda-dynamodb
+.idea
+logs/
