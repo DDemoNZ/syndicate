@@ -14,7 +14,11 @@
             "dynamodb:DeleteItem",
             "ssm:PutParameter",
             "ssm:GetParameter",
-            "kms:Decrypt"
+            "kms:Decrypt",
+            "lambda:CreateEventSourceMapping",
+            "dynamodb:DescribeStream",
+            "dynamodb:GetRecords",
+            "dynamodb:ListStreams"
           ],
           "Effect": "Allow",
           "Resource": "*"
