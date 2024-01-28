@@ -2,6 +2,7 @@ package com.task06;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
@@ -41,6 +42,8 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, Void> {
     private final AmazonDynamoDB client = getAmazonDynamoDBClient();
     private final String CONFIGURATION_TABLE_NAME = "cmtr-6a95d9c3-Configuration-test";
     private final String AUDIT_TABLE_NAME = "cmtr-6a95d9c3-Audit-test";
+//    private final String CONFIGURATION_TABLE_NAME = "Configuration";
+//    private final String AUDIT_TABLE_NAME = "Audit";
     private LambdaLogger logger;
 
     public Void handleRequest(DynamodbEvent request, Context context) {
@@ -101,7 +104,7 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, Void> {
     }
 
     private AmazonDynamoDB getAmazonDynamoDBClient() {
-        return AmazonDynamoDBClient.builder().build();
+        return AmazonDynamoDBClientBuilder.defaultClient();
     }
 
     private String getCurrentDateTime() {
