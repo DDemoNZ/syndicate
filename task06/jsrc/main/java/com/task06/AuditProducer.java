@@ -45,7 +45,8 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, Void> {
 
     public Void handleRequest(DynamodbEvent request, Context context) {
         logger = context.getLogger();
-        logger.log(request.toString());
+        logger.log("Request" + request.toString());
+        logger.log("Request records " + request.getRecords());
         request.getRecords().stream()
                 .filter(eventRecord -> eventRecord.getEventName().equals("INSERT") || eventRecord.getEventName().equals("MODIFY"))
                 .forEach(this::processEvent);
@@ -53,17 +54,17 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, Void> {
     }
 
     private void processEvent(DynamodbEvent.DynamodbStreamRecord eventRecord) {
-        logger.log(eventRecord.getEventName());
+        logger.log("Event name " + eventRecord.getEventName());
         if ("INSERT".equals(eventRecord.getEventName())) {
             PutItemRequest putItemRequest = getPutItemRequest(eventRecord.getDynamodb().getNewImage());
-            logger.log(putItemRequest.toString());
+            logger.log("Put item request " + putItemRequest.toString());
             PutItemResult putItemResult = client.putItem(putItemRequest);
-            logger.log(putItemResult.toString());
+            logger.log("Put item result " + putItemResult.toString());
         } else if ("UPDATED".equals(eventRecord.getEventName())) {
             UpdateItemRequest updateItemRequest = getUpdateItemRequest(eventRecord.getDynamodb().getNewImage(), eventRecord.getDynamodb().getOldImage());
-            logger.log(updateItemRequest.toString());
+            logger.log("Update item request" + updateItemRequest.toString());
             UpdateItemResult updateItemResult = client.updateItem(updateItemRequest);
-            logger.log(updateItemResult.toString());
+            logger.log("Update item result " + updateItemResult.toString());
         }
     }
 
@@ -83,6 +84,9 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, Void> {
 
     private PutItemRequest getPutItemRequest(Map<String, com.amazonaws.services.lambda.runtime.events.models.dynamodb.AttributeValue> newImage) {
         PutItemRequest putItemRequest = new PutItemRequest();
+        logger.log("new image log");
+        logger.log(newImage.toString());
+        logger.log("new image log");
         HashMap<String, com.amazonaws.services.dynamodbv2.model.AttributeValue> putAttributes = new HashMap<>();
         putAttributes.put(ID, new AttributeValue().withS(UUID.randomUUID().toString()));
         putAttributes.put(ITEM_KEY, new AttributeValue().withS(newImage.get("key").getS()));
