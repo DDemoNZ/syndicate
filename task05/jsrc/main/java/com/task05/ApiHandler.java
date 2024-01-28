@@ -17,7 +17,6 @@ import org.apache.http.HttpStatus;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.ChronoField;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -36,10 +35,6 @@ public class ApiHandler implements RequestHandler<RequestDto, ResponseDto> {
     private static DateTimeFormatter getDateTimeFormatter() {
         return new DateTimeFormatterBuilder()
                 .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
-                .optionalStart()
-                .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)
-                .optionalEnd()
-                .appendPattern("X")
                 .toFormatter();
     }
 
