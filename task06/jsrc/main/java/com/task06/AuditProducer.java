@@ -52,7 +52,7 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, Void> {
         logger.log("Request" + request.toString());
         logger.log("Request records " + request.getRecords());
         request.getRecords().stream()
-                .filter(eventRecord -> eventRecord.getEventName().equals("INSERT") || eventRecord.getEventName().equals("MODIFY"))
+                .filter(eventRecord -> "INSERT".equals(eventRecord.getEventName()) || "MODIFY".equals(eventRecord.getEventName()))
                 .forEach(this::processEvent);
         return null;
     }
@@ -83,7 +83,7 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, Void> {
             valueAttributes.put(KEY, new AttributeValue().withS(newImage.get(KEY).getS()));
             valueAttributes.put(VALUE, new AttributeValue().withS(newImage.get(VALUE).getS()));
             itemRequestAttributes.put(NEW_VALUE, new AttributeValue().withM(valueAttributes));
-        } else if ("UPDATED".equals(eventName)) {
+        } else if ("MODIFY".equals(eventName)) {
             itemRequestAttributes.put(UPDATED_ATTRIBUTE, new AttributeValue().withS(oldImage.get(ID).getS()));
             itemRequestAttributes.put(OLD_VALUE, new AttributeValue().withS(oldImage.get(VALUE).getS()));
             itemRequestAttributes.put(NEW_VALUE, new AttributeValue().withS(newImage.get(VALUE).getS()));
