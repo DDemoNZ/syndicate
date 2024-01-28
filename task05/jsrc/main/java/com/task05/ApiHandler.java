@@ -5,6 +5,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.syndicate.deployment.annotations.lambda.LambdaHandler;
 import com.syndicate.deployment.annotations.resources.DependsOn;
@@ -14,9 +15,7 @@ import com.task05.dto.RequestDto;
 import com.task05.dto.ResponseDto;
 import org.apache.http.HttpStatus;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -32,29 +31,23 @@ import java.util.stream.Collectors;
 )
 public class ApiHandler implements RequestHandler<RequestDto, ResponseDto> {
 
-    private static DateTimeFormatter getDateTimeFormatter() {
-        return new DateTimeFormatterBuilder()
-                .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
-                .toFormatter();
-    }
-
     private static final String TABLE_NAME = "cmtr-6a95d9c3-Events-test";
     private final AmazonDynamoDB client = getAmazonDynamoDBClient();
-    private final DateTimeFormatter formatter = getDateTimeFormatter();
 
     public ResponseDto handleRequest(RequestDto request, Context context) {
-        context.getLogger().log(request.toString());
+        LambdaLogger logger = context.getLogger();
+        logger.log(request.toString());
         Event eventObject = createEventObject(request);
         PutItemRequest putItemRequest = getPutItemRequest(eventObject);
         client.putItem(putItemRequest);
-        return createResponseDto(eventObject);
+        ResponseDto responseDto = createResponseDto(eventObject);
+        logger.log(responseDto.toString());
+        return responseDto;
     }
 
     private Event createEventObject(RequestDto request) {
-        return new Event().withId(UUID.randomUUID().toString())
-                .withPrincipalId(request.getPrincipalId())
-                .withCreatedAt(getCurrentDateTime())
-                .withBody(transformContentToJsonBodyString(request.getContent()));
+        return new Event(UUID.randomUUID().toString(), request.getPrincipalId(),
+                getCurrentDateTime(), request.getContent());
     }
 
     private PutItemRequest getPutItemRequest(Event event) {
@@ -64,10 +57,16 @@ public class ApiHandler implements RequestHandler<RequestDto, ResponseDto> {
         itemAttributes.put("id", new AttributeValue().withS(event.getId()));
         itemAttributes.put("principalId", new AttributeValue().withN(String.valueOf(event.getPrincipalId())));
         itemAttributes.put("createdAt", new AttributeValue().withS(event.getCreatedAt()));
-        itemAttributes.put("body", new AttributeValue().withS(event.getBody()));
+        itemAttributes.put("body", new AttributeValue().withM(transformContentEntryToAttributeValue(event.getBody())));
 
         putItemRequest.withTableName(TABLE_NAME).setItem(itemAttributes);
         return putItemRequest;
+    }
+
+    private Map<String, AttributeValue> transformContentEntryToAttributeValue(Map<String, String> body) {
+        Map<String, AttributeValue> bodyAttributes = new HashMap<>();
+        body.forEach((key, value) -> bodyAttributes.put(key, new AttributeValue(value)));
+        return bodyAttributes;
     }
 
     private ResponseDto createResponseDto(Event event) {
@@ -80,22 +79,7 @@ public class ApiHandler implements RequestHandler<RequestDto, ResponseDto> {
         return AmazonDynamoDBClient.builder().build();
     }
 
-    private String transformContentToJsonBodyString(Map<String, String> content) {
-        return "{" + content.entrySet().stream()
-                .map(ApiHandler::transformContentEntryToString)
-                .collect(Collectors.joining(", ")) + "}";
-    }
-
-    private static String transformContentEntryToString(Map.Entry<String, String> entry) {
-        return "\"" +
-                entry.getKey() +
-                "\" : \"" +
-                entry.getValue() +
-                "\"";
-    }
-
     public String getCurrentDateTime() {
-        LocalDateTime now = LocalDateTime.now();
-        return now.format(formatter);
+        return Instant.now().toString();
     }
 }

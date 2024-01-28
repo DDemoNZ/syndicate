@@ -1,16 +1,18 @@
 package com.task05.dto;
 
+import java.util.Map;
+
 public class Event {
 
     private String id;
     private int principalId;
     private String createdAt;
-    private String body;
+    private Map<String, String> body;
 
     public Event() {
     }
 
-    public Event(String id, int principalId, String createdAt, String body) {
+    public Event(String id, int principalId, String createdAt, Map<String, String> body) {
         this.id = id;
         this.principalId = principalId;
         this.createdAt = createdAt;
@@ -41,32 +43,12 @@ public class Event {
         this.createdAt = createdAt;
     }
 
-    public String getBody() {
+    public Map<String, String> getBody() {
         return body;
     }
 
-    public void setBody(String body) {
+    public void setBody(Map<String, String> body) {
         this.body = body;
-    }
-
-    public Event withId(String id) {
-        this.setId(id);
-        return this;
-    }
-
-    public Event withPrincipalId(int principalId) {
-        this.setPrincipalId(principalId);
-        return this;
-    }
-
-    public Event withCreatedAt(String createdAt) {
-        this.setCreatedAt(createdAt);
-        return this;
-    }
-
-    public Event withBody(String body) {
-        this.setBody(body);
-        return this;
     }
 
     public Event with() {
