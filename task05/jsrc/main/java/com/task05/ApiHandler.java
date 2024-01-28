@@ -38,7 +38,7 @@ public class ApiHandler implements RequestHandler<RequestDto, ResponseDto> {
                 .toFormatter();
     }
 
-    private static final String TABLE_NAME = "Events";
+    private static final String TABLE_NAME = "cmtr-6a95d9c3-Events-test";
     private final AmazonDynamoDB client = getAmazonDynamoDBClient();
     private final DateTimeFormatter formatter = getDateTimeFormatter();
 
