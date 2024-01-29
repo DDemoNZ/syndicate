@@ -118,7 +118,7 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, Void> {
 
     private static String getFormattedTime() {
         LocalDateTime modificationTime = LocalDateTime.now();
-        return modificationTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        return modificationTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SS'Z'"));
     }
 
     private AmazonDynamoDB getAmazonDynamoDBClient() {
