@@ -2,6 +2,7 @@ package com.task06;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
+import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
 import com.amazonaws.services.dynamodbv2.model.PutItemResult;
@@ -15,6 +16,8 @@ import com.syndicate.deployment.annotations.resources.DependsOn;
 import com.syndicate.deployment.model.ResourceType;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -62,49 +65,63 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, Void> {
 
     private void processEvent(DynamodbEvent.DynamodbStreamRecord eventRecord) {
         logger.log("Event name " + eventRecord.getEventName());
-        HashMap<String, AttributeValue> putItemAttributes = getItemRequest(
+        PutItemRequest putItemAttributes = getItemRequest(
                 eventRecord.getDynamodb().getNewImage(),
                 eventRecord.getDynamodb().getOldImage(),
                 eventRecord.getEventName());
         logger.log("Put item request " + putItemAttributes.toString());
-        PutItemResult putItemResult = client.putItem(AUDIT_TABLE_NAME, putItemAttributes);
+        putItemAttributes.withTableName(AUDIT_TABLE_NAME);
+        PutItemResult putItemResult = client.putItem(putItemAttributes);
         logger.log("Put item result " + putItemResult.toString());
     }
 
-    private HashMap<String, AttributeValue> getItemRequest(
+    private PutItemRequest getItemRequest(
             Map<String, com.amazonaws.services.lambda.runtime.events.models.dynamodb.AttributeValue> newImage,
             Map<String, com.amazonaws.services.lambda.runtime.events.models.dynamodb.AttributeValue> oldImage,
             String eventName
     ) {
         PutItemRequest putItemRequest = new PutItemRequest();
-        HashMap<String, AttributeValue> itemRequestAttributes = new HashMap<>();
         logger.log("new image log");
         logger.log(newImage.toString());
-        logger.log("new image log");
-
-        putItemRequest.addItemEntry(ID, new AttributeValue().withS(UUID.randomUUID().toString()));
-        putItemRequest.addItemEntry(ITEM_KEY, new AttributeValue().withS(newImage.get(KEY).getS()));
-        putItemRequest.addItemEntry(MODIFICATION_TIME, new AttributeValue().withS(getCurrentDateTime()));
 
         if (INSERT_EVENT.equals(eventName)) {
-            HashMap<String, AttributeValue> valueAttributes = new HashMap<>();
-            for (Map.Entry<String, com.amazonaws.services.lambda.runtime.events.models.dynamodb.AttributeValue> entry : newImage.entrySet()) {
-                valueAttributes.put(entry.getKey(), new AttributeValue(entry.getValue().getS()));
-            }
-            putItemRequest.addItemEntry(NEW_VALUE, new AttributeValue().withM(valueAttributes));
+            Map<String, AttributeValue> itemValues = new HashMap<>();
+            itemValues.put(ID, new AttributeValue().withS(UUID.randomUUID().toString()));
+            itemValues.put(ITEM_KEY, new AttributeValue().withS(newImage.get(KEY).getS()));
+
+            String formattedTime = getFormattedTime();
+            itemValues.put(MODIFICATION_TIME, new AttributeValue().withS(formattedTime));
+
+            Map<String, AttributeValue> nestedMap = new HashMap<>();
+            nestedMap.put(KEY, new AttributeValue().withS(newImage.get(KEY).getS()));
+            nestedMap.put(VALUE, new AttributeValue().withN(newImage.get(VALUE).getS()));
+
+            itemValues.put(NEW_VALUE, new AttributeValue().withM(nestedMap));
+
+            putItemRequest.withItem(itemValues);
         } else if (MODIFY_EVENT.equals(eventName)) {
-            putItemRequest.addItemEntry(UPDATED_ATTRIBUTE, new AttributeValue().withS(oldImage.get(ID).getS()));
-            putItemRequest.addItemEntry(OLD_VALUE, new AttributeValue().withS(oldImage.get(VALUE).getS()));
-            putItemRequest.addItemEntry(NEW_VALUE, new AttributeValue().withS(newImage.get(VALUE).getS()));
+            Map<String, AttributeValue> itemValues = new HashMap<>();
+            itemValues.put(ID, new AttributeValue().withS(UUID.randomUUID().toString()));
+            itemValues.put(ITEM_KEY, new AttributeValue().withS(newImage.get(KEY).getS()));
+
+            itemValues.put(MODIFICATION_TIME, new AttributeValue().withS(getFormattedTime()));
+
+            itemValues.put(UPDATED_ATTRIBUTE, new AttributeValue().withS(newImage.get(KEY).getS()));
+            itemValues.put(OLD_VALUE, new AttributeValue().withN(oldImage.get(VALUE).getS()));
+            itemValues.put(NEW_VALUE, new AttributeValue().withN(newImage.get(VALUE).getS()));
+
+            putItemRequest.withItem(itemValues);
         }
-        return itemRequestAttributes;
+        return putItemRequest;
+    }
+
+    private static String getFormattedTime() {
+        LocalDateTime modificationTime = LocalDateTime.now();
+        return modificationTime.format(DateTimeFormatter.ISO_DATE_TIME);
     }
 
     private AmazonDynamoDB getAmazonDynamoDBClient() {
         return AmazonDynamoDBClientBuilder.defaultClient();
     }
 
-    private String getCurrentDateTime() {
-        return Instant.now().toString();
-    }
 }
