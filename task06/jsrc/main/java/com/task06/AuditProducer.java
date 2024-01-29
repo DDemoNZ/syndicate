@@ -18,6 +18,7 @@ import com.syndicate.deployment.model.ResourceType;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -117,7 +118,7 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, Void> {
 
     private static String getFormattedTime() {
         LocalDateTime modificationTime = LocalDateTime.now();
-        return modificationTime.format(DateTimeFormatter.ISO_DATE_TIME);
+        return modificationTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
     }
 
     private AmazonDynamoDB getAmazonDynamoDBClient() {
