@@ -1,0 +1,6 @@
+.syndicate
+logs/
+target
+.idea
+.syndicate-config-lambda_layers
+sdk-layer-assembly.zip
