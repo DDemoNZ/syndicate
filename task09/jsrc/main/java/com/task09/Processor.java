@@ -8,6 +8,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.syndicate.deployment.annotations.LambdaUrlConfig;
 import com.syndicate.deployment.annotations.lambda.LambdaHandler;
+import com.syndicate.deployment.model.TracingMode;
 import com.syndicate.deployment.model.lambda.url.AuthType;
 import com.syndicate.deployment.model.lambda.url.InvokeMode;
 import org.apache.http.HttpStatus;
@@ -27,7 +28,8 @@ import java.util.stream.Collectors;
 
 @LambdaHandler(
         lambdaName = "processor",
-        roleName = "processor-role"
+        roleName = "processor-role",
+        tracingMode = TracingMode.Active
 )
 @LambdaUrlConfig(
         authType = AuthType.NONE,
