@@ -3,7 +3,9 @@ package com.task09;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.PutItemResult;
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.syndicate.deployment.annotations.LambdaUrlConfig;
@@ -11,14 +13,11 @@ import com.syndicate.deployment.annotations.lambda.LambdaHandler;
 import com.syndicate.deployment.model.TracingMode;
 import com.syndicate.deployment.model.lambda.url.AuthType;
 import com.syndicate.deployment.model.lambda.url.InvokeMode;
-import org.apache.http.HttpStatus;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -40,26 +39,31 @@ public class Processor implements RequestHandler<Object, Object> {
     private static final String OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m";
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final String TABLE_NAME = "cmtr-6a95d9c3-Weather-test";
-
     private final AmazonDynamoDB client = getDynamoDBClient();
+    private LambdaLogger logger;
 
     public String handleRequest(Object request, Context context) {
+        logger = context.getLogger();
         try {
             String latestForecast = getLatestForecast();
             WeatherDto weatherDto = new WeatherDto();
             weatherDto.setId(UUID.randomUUID().toString());
             weatherDto.setForecast(objectMapper.readValue(latestForecast, WeatherDto.Forecast.class));
-            System.out.println(weatherDto);
+            logger.log("Weather DTO received object: " + weatherDto);
 
             Map<String, AttributeValue> putItem = getPutItem(weatherDto);
-            client.putItem(TABLE_NAME, putItem);
+            logger.log("Put item to the DynamoDB");
+            PutItemResult putItemResult = client.putItem(TABLE_NAME, putItem);
+            logger.log(putItemResult.toString());
             return "OK";
         } catch (IOException e) {
+            logger.log(e.getMessage());
             throw new RuntimeException(e);
         }
     }
 
     private String getLatestForecast() {
+        logger.log("Get latest forecast from the Open-Metio API");
         try {
             URL url = new URL(OPEN_METEO_URL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -74,8 +78,10 @@ public class Processor implements RequestHandler<Object, Object> {
 
             reader.close();
             connection.disconnect();
+            logger.log("Open-Metio API Response: " + responseBuilder);
             return responseBuilder.toString();
         } catch (IOException e) {
+            logger.log("Open-Metio API Exception: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -84,6 +90,7 @@ public class Processor implements RequestHandler<Object, Object> {
         HashMap<String, AttributeValue> putItem = new HashMap<>();
         putItem.put("id", new AttributeValue().withS(weatherDto.getId()));
         putItem.put("forecast", new AttributeValue().withM(getForecastItem(weatherDto)));
+        logger.log("Weather DTO Object: " + putItem);
         return putItem;
     }
 
@@ -98,13 +105,15 @@ public class Processor implements RequestHandler<Object, Object> {
         forecastItem.put("timezone", new AttributeValue().withS(weatherDto.getForecast().getTimezone()));
         forecastItem.put("timezone_abbreviation", new AttributeValue().withS(weatherDto.getForecast().getTimezone_abbreviation()));
         forecastItem.put("utc_offset_seconds", new AttributeValue().withN(String.valueOf(weatherDto.getForecast().getUtc_offset_seconds())));
+        logger.log("Forecast Object: " + forecastItem);
         return forecastItem;
     }
 
-    private static HashMap<String, AttributeValue> getHourlyUnitsItem(WeatherDto weatherDto) {
+    private HashMap<String, AttributeValue> getHourlyUnitsItem(WeatherDto weatherDto) {
         HashMap<String, AttributeValue> hourlyUnits = new HashMap<>();
         hourlyUnits.put("temperature_2m", new AttributeValue().withS(weatherDto.getForecast().getHourly_units().getTemperature_2m()));
         hourlyUnits.put("time", new AttributeValue().withS(weatherDto.getForecast().getHourly_units().getTime()));
+        logger.log("Hourly unit Object: " + hourlyUnits);
         return hourlyUnits;
     }
 
@@ -112,6 +121,7 @@ public class Processor implements RequestHandler<Object, Object> {
         HashMap<String, AttributeValue> hourlyItem = new HashMap<>();
         hourlyItem.put("temperature_2m", new AttributeValue().withL(getHourlyAttributeValueTemperature(weatherDto)));
         hourlyItem.put("time", new AttributeValue().withL(getHourlyAttributeValueTime(weatherDto)));
+        logger.log("Hourly item Object: " + hourlyItem);
         return hourlyItem;
     }
 
