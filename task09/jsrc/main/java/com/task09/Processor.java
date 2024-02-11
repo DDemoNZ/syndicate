@@ -90,7 +90,7 @@ public class Processor implements RequestHandler<Object, Object> {
     private HashMap<String, AttributeValue> getForecastItem(WeatherDto weatherDto) {
         HashMap<String, AttributeValue> forecastItem = new HashMap<>();
         forecastItem.put("elevation", new AttributeValue().withN(String.valueOf(weatherDto.getForecast().getElevation())));
-        forecastItem.put("generationtime_ms", new AttributeValue());
+        forecastItem.put("generationtime_ms", new AttributeValue().withN(String.valueOf(weatherDto.getForecast().getGenerationtime_ms())));
         forecastItem.put("hourly", new AttributeValue().withM(getHourlyItem(weatherDto)));
         forecastItem.put("hourly_units", new AttributeValue().withM(getHourlyUnitsItem(weatherDto)));
         forecastItem.put("latitude", new AttributeValue().withN(String.valueOf(weatherDto.getForecast().getLatitude())));
