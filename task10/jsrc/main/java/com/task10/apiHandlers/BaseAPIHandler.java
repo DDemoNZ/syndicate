@@ -10,7 +10,8 @@ public interface BaseAPIHandler {
 
     default APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent requestEvent) throws NoSuchMethodException {
         if (HTTP_METHOD_GET.equals(requestEvent.getHttpMethod())) {
-            System.out.println(requestEvent.getPath());
+            System.out.println("requestEvent.getResource() " + requestEvent.getResource());
+            System.out.println("requestEvent.getPath() " + requestEvent.getPath());
             if (requestEvent.getPath().matches("/\\w+/.+")) {
                 System.out.println("attributes");
                 return handleGetWithAttributes(requestEvent);
