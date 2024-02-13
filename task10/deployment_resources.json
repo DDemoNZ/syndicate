@@ -35,7 +35,7 @@
   },
   "task10_api": {
     "resource_type": "api_gateway",
-    "deploy_stage": "api"
+    "deploy_stage": "api",
     "dependencies": [
       {
         "resource_name": "api_handler",
