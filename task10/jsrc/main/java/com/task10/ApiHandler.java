@@ -35,7 +35,8 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
             logger.log("Call handler for " + handler.getPathMatcher());
             return handler.handleRequest(request);
         } catch (Exception e) {
-            logger.log(e.getMessage());
+//            logger.log(e.getMessage());
+            logger.log("ERROR " + e.getMessage());
             throw new RuntimeException(e);
         }
     }

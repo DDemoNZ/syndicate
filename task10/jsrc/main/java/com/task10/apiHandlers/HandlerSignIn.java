@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.rmi.NoSuchObjectException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.task10.utils.Constants.COGNITO_POOL_NAME;
 
@@ -29,10 +30,14 @@ public class HandlerSignIn implements BaseAPIHandler {
     @Override
     public APIGatewayProxyResponseEvent handlePost(APIGatewayProxyRequestEvent event) {
         try {
+            System.out.println(getClass() + " " + event.getPath() + " " + event.getResource());
             SignInRequestDto signInRequestDto = objectMapper.readValue(event.getBody(), SignInRequestDto.class);
+            System.out.println(getClass() + " " + "signInRequestDto " + signInRequestDto.toString());
             String cognitoId = getListCognitoUserIdByPoolName();
+            System.out.println(getClass() + " " + "cognitoId " + cognitoId);
             AdminInitiateAuthResponse adminInitiateAuthResponse = authenticateUser(signInRequestDto, cognitoId);
 //            SignInResponseDto responseDto = new SignInResponseDto(adminInitiateAuthResponse.authenticationResult().accessToken());
+            System.out.println(getClass() + " " + "adminInitiateAuthResponse.toString() " + adminInitiateAuthResponse.toString());
             if (adminInitiateAuthResponse.sdkHttpResponse().isSuccessful()) {
                 SignInResponseDto responseDto = new SignInResponseDto(adminInitiateAuthResponse.authenticationResult().idToken());
                 System.out.println(getClass() + "user.sdkHttpResponse().isSuccessful() " + adminInitiateAuthResponse.sdkHttpResponse().isSuccessful());
@@ -70,12 +75,23 @@ public class HandlerSignIn implements BaseAPIHandler {
 //        return clientId;
 //    }
 
-    private String getListCognitoUserIdByPoolName() throws NoSuchObjectException {
-        return cognitoClient.listUserPools(ListUserPoolsRequest.builder().build())
-                .userPools().stream()
-                .map(UserPoolDescriptionType::id)
-                .filter(COGNITO_POOL_NAME::equals)
-                .findFirst().orElse(null);
+    private String getListCognitoUserIdByPoolName() {
+//        return cognitoClient.listUserPools(ListUserPoolsRequest.builder().build())
+//                .userPools().stream()
+//                .map(UserPoolDescriptionType::id)
+//                .filter(COGNITO_POOL_NAME::equals)
+//                .findFirst().orElse(null);
+        ListUserPoolsResponse listUserPoolsResponse = cognitoClient.listUserPools(ListUserPoolsRequest.builder().build());
+        System.out.println(getClass() + " listUserPoolsResponse.toString() " + listUserPoolsResponse.toString());
+        List<UserPoolDescriptionType> userPoolDescriptionTypes = listUserPoolsResponse.userPools();
+        System.out.println(getClass() + " userPoolDescriptionTypes " + userPoolDescriptionTypes.toString());
+        List<String> poolIds = userPoolDescriptionTypes.stream().map(UserPoolDescriptionType::id).collect(Collectors.toList());
+        System.out.println(getClass() + " poolIds " + poolIds.toString());
+        List<String> filteredList = poolIds.stream().filter(COGNITO_POOL_NAME::equals).collect(Collectors.toList());
+        System.out.println(getClass() + " filteredList " + filteredList.toString());
+        String cognitoUserPoolId = filteredList.stream().findFirst().orElse(null);
+        System.out.println(getClass() + " cognitoUserPoolId " + cognitoUserPoolId);
+        return cognitoUserPoolId;
     }
     
     @Override
