@@ -83,7 +83,8 @@ public class HandlerSignUp implements BaseAPIHandler {
     private void validateUser(SignUpRequestDto signUpRequestDto) throws InvalidPropertiesFormatException {
         String email = signUpRequestDto.getEmail();
         boolean isEmailValid = ValidateUserUtil.validateEmail(email);
-        if (isEmailValid) {
+        System.out.println("EMAIL " + email + " is valid " + isEmailValid);
+        if (!isEmailValid) {
             throw new InvalidPropertiesFormatException("Invalid email format");
         }
     }
