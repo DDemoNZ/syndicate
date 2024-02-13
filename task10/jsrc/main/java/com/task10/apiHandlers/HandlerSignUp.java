@@ -13,7 +13,7 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.*;
 import java.io.IOException;
 import java.rmi.NoSuchObjectException;
 
-import static com.task10.utils.Constants.COGNITO_POOL_NAME;
+import static com.task10.utils.Constants.*;
 
 @Data
 public class HandlerSignUp implements BaseAPIHandler {
@@ -25,9 +25,11 @@ public class HandlerSignUp implements BaseAPIHandler {
     @Override
     public APIGatewayProxyResponseEvent handlePost(APIGatewayProxyRequestEvent event) {
         try {
+            System.out.println(getClass() + " Event " + event);
             String body = event.getBody();
             SignUpRequestDto signUpRequestDto = objectMapper.readValue(body, SignUpRequestDto.class);
             String cognitoId = getListCognitoUserIdByPoolName();
+            System.out.println(getClass() + " CognitoId " + cognitoId);
             AdminConfirmSignUpResponse user = createUser(signUpRequestDto, cognitoId);
             if (user.sdkHttpResponse().isSuccessful()) {
                 return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_OK);
@@ -75,7 +77,7 @@ public class HandlerSignUp implements BaseAPIHandler {
         return cognitoClient.listUserPools(ListUserPoolsRequest.builder().build())
                 .userPools().stream()
                 .map(UserPoolDescriptionType::id)
-                .filter(COGNITO_POOL_NAME::equals)
+                .filter((PREFIX + COGNITO_POOL_NAME + SUFFIX)::equals)
                 .findFirst().orElse(null);
     }
 
