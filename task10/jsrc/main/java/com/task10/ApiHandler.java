@@ -32,7 +32,7 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
         System.out.println(getClass() + "request.getPath().matches(\"/\\\\\\w+/.+\") " + request.getPath().matches("/\\w+/.+"));
         BaseAPIHandler handler = handlers.get(request.getResource().split("/")[1]);
         try {
-            logger.log("Call handler for " + handler.getPathMatcher());
+            logger.log("Call handler for " + handler);
             return handler.handleRequest(request);
         } catch (Exception e) {
 //            logger.log(e.getMessage());
