@@ -76,8 +76,8 @@ public class HandlerSignUp implements BaseAPIHandler {
     private String getListCognitoUserIdByPoolName() throws NoSuchObjectException {
         return cognitoClient.listUserPools(ListUserPoolsRequest.builder().build())
                 .userPools().stream()
+                .filter(userPool -> (PREFIX + COGNITO_POOL_NAME + SUFFIX).equals(userPool.name()))
                 .map(UserPoolDescriptionType::id)
-                .filter((PREFIX + COGNITO_POOL_NAME + SUFFIX)::equals)
                 .findFirst().orElse(null);
     }
 
