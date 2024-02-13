@@ -23,7 +23,7 @@ import static com.task10.utils.Constants.COGNITO_POOL_NAME;
 @Data
 public class HandlerSignIn implements BaseAPIHandler {
 
-    private String path = "singin";
+    private String path = "signin";
     private ObjectMapper objectMapper = new ObjectMapper();
     private CognitoIdentityProviderClient cognitoClient = CognitoUtils.getCognitoClient();
 
