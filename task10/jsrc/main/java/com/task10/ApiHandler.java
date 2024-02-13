@@ -9,6 +9,7 @@ import com.syndicate.deployment.annotations.lambda.LambdaHandler;
 import com.task10.apiHandlers.BaseAPIHandler;
 import com.task10.utils.ReflectionUtils;
 
+import java.util.Arrays;
 import java.util.Map;
 
 @LambdaHandler(
@@ -22,12 +23,12 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
 
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
         logger = context.getLogger();
-        System.out.println("27: Path: " + request.getResource());
-        System.out.println("28: Path: " + request.getPath());
-        System.out.println("29: Request: " + request.toString());
-        System.out.println("31: handlers: " + handlers.keySet());
-        System.out.println("Handlers " + handlers.keySet().toString());
-        System.out.println("Handler for " + request.getResource().split("/")[1]);
+        System.out.println("25: Path: " + request.getResource());
+        System.out.println("26: Path: " + request.getPath());
+        System.out.println("27: Request: " + request.toString());
+        System.out.println("28: handlers: " + handlers.keySet());
+        System.out.println("29 Handler for " + request.getResource().split("/")[1]);
+        System.out.println("30 Resource split " + Arrays.toString(request.getResource().split("/")));
         BaseAPIHandler handler = handlers.get(request.getResource().split("/")[1]);
         try {
             logger.log("Call handler for " + handler.getPathMatcher());
