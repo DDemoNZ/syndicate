@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.task10.utils.Constants.COGNITO_POOL_NAME;
+import static com.task10.utils.Constants.*;
 
 @Data
 public class HandlerSignIn implements BaseAPIHandler {
@@ -87,7 +87,7 @@ public class HandlerSignIn implements BaseAPIHandler {
         System.out.println(getClass() + " userPoolDescriptionTypes " + userPoolDescriptionTypes.toString());
         List<String> poolIds = userPoolDescriptionTypes.stream().map(UserPoolDescriptionType::id).collect(Collectors.toList());
         System.out.println(getClass() + " poolIds " + poolIds.toString());
-        List<String> filteredList = poolIds.stream().filter(COGNITO_POOL_NAME::equals).collect(Collectors.toList());
+        List<String> filteredList = poolIds.stream().filter((PREFIX + COGNITO_POOL_NAME + SUFFIX)::equals).collect(Collectors.toList());
         System.out.println(getClass() + " filteredList " + filteredList.toString());
         String cognitoUserPoolId = filteredList.stream().findFirst().orElse(null);
         System.out.println(getClass() + " cognitoUserPoolId " + cognitoUserPoolId);
