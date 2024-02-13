@@ -68,6 +68,7 @@ public class HandlerTables implements BaseAPIHandler {
                     .collect(Collectors.toList());
             TablesResponseDto tablesResponseDto = new TablesResponseDto();
             tablesResponseDto.setTables(tables);
+            System.out.println("TABLES " + tablesResponseDto);
             return new APIGatewayProxyResponseEvent().withBody(objectMapper.writeValueAsString(tablesResponseDto));
         } catch (JsonProcessingException e) {
             return new APIGatewayProxyResponseEvent();

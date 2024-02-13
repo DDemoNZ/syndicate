@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.task10.models.SignUpRequestDto;
 import com.task10.utils.CognitoUtils;
+import com.task10.utils.ValidateUserUtil;
 import lombok.Data;
 import org.apache.http.HttpStatus;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
@@ -12,6 +13,9 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.*;
 
 import java.io.IOException;
 import java.rmi.NoSuchObjectException;
+import java.util.InvalidPropertiesFormatException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.task10.utils.Constants.*;
 
@@ -31,18 +35,22 @@ public class HandlerSignUp implements BaseAPIHandler {
             String cognitoId = getListCognitoUserIdByPoolName();
             System.out.println(getClass() + " CognitoId " + cognitoId);
             AdminConfirmSignUpResponse user = createUser(signUpRequestDto, cognitoId);
+            System.out.println(user);
             if (user.sdkHttpResponse().isSuccessful()) {
+                System.out.println("user.sdkHttpResponse().isSuccessful() " + user.sdkHttpResponse().isSuccessful());
                 return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_OK);
             } else {
+                System.out.println("user.sdkHttpResponse().isSuccessful() " + user.sdkHttpResponse().isSuccessful());
                 return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_BAD_REQUEST);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_BAD_REQUEST);
         }
     }
 
     //    private void createUser(SignUpRequestDto signUpRequestDto, String cognitoId) {
-    private AdminConfirmSignUpResponse createUser(SignUpRequestDto signUpRequestDto, String cognitoId) {
+    private AdminConfirmSignUpResponse createUser(SignUpRequestDto signUpRequestDto, String cognitoId) throws InvalidPropertiesFormatException {
+        validateUser(signUpRequestDto);
         SignUpRequest signUpRequest = SignUpRequest.builder()
                 .username(signUpRequestDto.getEmail())
                 .password(signUpRequestDto.getPassword())
@@ -70,6 +78,14 @@ public class HandlerSignUp implements BaseAPIHandler {
 //                )
 //                .messageAction(MessageActionType.SUPPRESS)
 //                .build());
+    }
+
+    private void validateUser(SignUpRequestDto signUpRequestDto) throws InvalidPropertiesFormatException {
+        String email = signUpRequestDto.getEmail();
+        boolean isEmailValid = ValidateUserUtil.validateEmail(email);
+        if (isEmailValid) {
+            throw new InvalidPropertiesFormatException("Invalid email format");
+        }
     }
 
 

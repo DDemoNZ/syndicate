@@ -35,11 +35,15 @@ public class HandlerSignIn implements BaseAPIHandler {
 //            SignInResponseDto responseDto = new SignInResponseDto(adminInitiateAuthResponse.authenticationResult().accessToken());
             if (adminInitiateAuthResponse.sdkHttpResponse().isSuccessful()) {
                 SignInResponseDto responseDto = new SignInResponseDto(adminInitiateAuthResponse.authenticationResult().idToken());
+                System.out.println("user.sdkHttpResponse().isSuccessful() " + adminInitiateAuthResponse.sdkHttpResponse().isSuccessful());
+                System.out.println(responseDto);
                 return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_OK).withBody(objectMapper.writeValueAsString(responseDto));
             } else {
+                System.out.println("user.sdkHttpResponse().isSuccessful() " + adminInitiateAuthResponse.sdkHttpResponse().isSuccessful());
                 return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_BAD_REQUEST);
             }
         } catch (IOException e) {
+            System.out.println("ERROR SIGN IN");
             return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_BAD_REQUEST);
         }
     }
