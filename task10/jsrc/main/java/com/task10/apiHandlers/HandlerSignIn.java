@@ -81,15 +81,23 @@ public class HandlerSignIn implements BaseAPIHandler {
 //                .map(UserPoolDescriptionType::id)
 //                .filter(COGNITO_POOL_NAME::equals)
 //                .findFirst().orElse(null);
+//        ListUserPoolsResponse listUserPoolsResponse = cognitoClient.listUserPools(ListUserPoolsRequest.builder().build());
+//        System.out.println(getClass() + " listUserPoolsResponse.toString() " + listUserPoolsResponse.toString());
+//        List<UserPoolDescriptionType> userPoolDescriptionTypes = listUserPoolsResponse.userPools();
+//        System.out.println(getClass() + " userPoolDescriptionTypes " + userPoolDescriptionTypes.toString());
+//        List<String> poolIds = userPoolDescriptionTypes.stream().map(UserPoolDescriptionType::id).collect(Collectors.toList());
+//        System.out.println(getClass() + " poolIds " + poolIds.toString());
+//        List<String> filteredList = poolIds.stream().filter((PREFIX + COGNITO_POOL_NAME + SUFFIX)::equals).collect(Collectors.toList());
+//        System.out.println(getClass() + " filteredList " + filteredList.toString());
+//        String cognitoUserPoolId = filteredList.stream().findFirst().orElse(null);
+//        System.out.println(getClass() + " cognitoUserPoolId " + cognitoUserPoolId);
         ListUserPoolsResponse listUserPoolsResponse = cognitoClient.listUserPools(ListUserPoolsRequest.builder().build());
         System.out.println(getClass() + " listUserPoolsResponse.toString() " + listUserPoolsResponse.toString());
-        List<UserPoolDescriptionType> userPoolDescriptionTypes = listUserPoolsResponse.userPools();
-        System.out.println(getClass() + " userPoolDescriptionTypes " + userPoolDescriptionTypes.toString());
-        List<String> poolIds = userPoolDescriptionTypes.stream().map(UserPoolDescriptionType::id).collect(Collectors.toList());
-        System.out.println(getClass() + " poolIds " + poolIds.toString());
-        List<String> filteredList = poolIds.stream().filter((PREFIX + COGNITO_POOL_NAME + SUFFIX)::equals).collect(Collectors.toList());
-        System.out.println(getClass() + " filteredList " + filteredList.toString());
-        String cognitoUserPoolId = filteredList.stream().findFirst().orElse(null);
+        List<UserPoolDescriptionType> userPools = listUserPoolsResponse.userPools();
+        System.out.println(getClass() + " userPools " + userPools.toString());
+        List<UserPoolDescriptionType> filteredPool = userPools.stream().filter(pool -> (PREFIX + COGNITO_POOL_NAME + SUFFIX).equals(pool.name())).collect(Collectors.toList());
+        System.out.println(getClass() + " filteredList " + filteredPool.toString());
+        String cognitoUserPoolId = filteredPool.stream().map(UserPoolDescriptionType::id).findFirst().orElse(null);
         System.out.println(getClass() + " cognitoUserPoolId " + cognitoUserPoolId);
         return cognitoUserPoolId;
     }
