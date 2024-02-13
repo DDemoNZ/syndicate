@@ -23,13 +23,13 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
 
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
         logger = context.getLogger();
-        System.out.println("25: Path: " + request.getResource());
-        System.out.println("26: Path: " + request.getPath());
-        System.out.println("27: Request: " + request.toString());
-        System.out.println("28: handlers: " + handlers.keySet());
-        System.out.println("29 Handler for " + request.getResource().split("/")[1]);
-        System.out.println("30 Resource split " + Arrays.toString(request.getResource().split("/")));
-        System.out.println("request.getPath().matches(\"/\\\\\\w+/.+\") " + request.getPath().matches("/\\w+/.+"));
+        System.out.println(getClass() + "25: Path: " + request.getResource());
+        System.out.println(getClass() + "26: Path: " + request.getPath());
+        System.out.println(getClass() + "27: Request: " + request.toString());
+        System.out.println(getClass() + "28: handlers: " + handlers.keySet());
+        System.out.println(getClass() + "29 Handler for " + request.getResource().split("/")[1]);
+        System.out.println(getClass() + "30 Resource split " + Arrays.toString(request.getResource().split("/")));
+        System.out.println(getClass() + "request.getPath().matches(\"/\\\\\\w+/.+\") " + request.getPath().matches("/\\w+/.+"));
         BaseAPIHandler handler = handlers.get(request.getResource().split("/")[1]);
         try {
             logger.log("Call handler for " + handler.getPathMatcher());

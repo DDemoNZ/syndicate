@@ -35,15 +35,16 @@ public class HandlerSignUp implements BaseAPIHandler {
             String cognitoId = getListCognitoUserIdByPoolName();
             System.out.println(getClass() + " CognitoId " + cognitoId);
             AdminConfirmSignUpResponse user = createUser(signUpRequestDto, cognitoId);
-            System.out.println(user);
+            System.out.println(getClass() + " user " + user);
             if (user.sdkHttpResponse().isSuccessful()) {
-                System.out.println("user.sdkHttpResponse().isSuccessful() " + user.sdkHttpResponse().isSuccessful());
+                System.out.println(getClass() + " user.sdkHttpResponse().isSuccessful() " + user.sdkHttpResponse().isSuccessful());
                 return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_OK);
             } else {
-                System.out.println("user.sdkHttpResponse().isSuccessful() " + user.sdkHttpResponse().isSuccessful());
+                System.out.println(getClass() + " user.sdkHttpResponse().isSuccessful() " + user.sdkHttpResponse().isSuccessful());
                 return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_BAD_REQUEST);
             }
         } catch (Exception e) {
+            System.out.println(getClass() + " error " + e.getMessage());
             return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_BAD_REQUEST);
         }
     }
@@ -83,21 +84,21 @@ public class HandlerSignUp implements BaseAPIHandler {
     private void validateUser(SignUpRequestDto signUpRequestDto) throws InvalidPropertiesFormatException {
         String email = signUpRequestDto.getEmail();
         boolean isEmailValid = ValidateUserUtil.validateEmail(email);
-        System.out.println("EMAIL " + email + " is valid " + isEmailValid);
+        boolean isPasswordValid = ValidateUserUtil.validatePassword(email);
+        System.out.println(getClass() + "EMAIL " + email + " is valid " + isEmailValid);
+        System.out.println(getClass() + "PASSWROD " + email + " is valid " + isPasswordValid);
         if (!isEmailValid) {
             throw new InvalidPropertiesFormatException("Invalid email format");
         }
     }
 
-
-    private String getListCognitoUserIdByPoolName() throws NoSuchObjectException {
+    private String getListCognitoUserIdByPoolName() {
         return cognitoClient.listUserPools(ListUserPoolsRequest.builder().build())
                 .userPools().stream()
                 .filter(userPool -> (PREFIX + COGNITO_POOL_NAME + SUFFIX).equals(userPool.name()))
                 .map(UserPoolDescriptionType::id)
                 .findFirst().orElse(null);
     }
-
 
     @Override
     public APIGatewayProxyResponseEvent handleGet(APIGatewayProxyRequestEvent event) {
