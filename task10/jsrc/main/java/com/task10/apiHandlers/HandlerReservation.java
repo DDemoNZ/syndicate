@@ -37,13 +37,18 @@ public class HandlerReservation implements BaseAPIHandler {
         try {
             CognitoUtils.authenticateUser(event);
             ReservationsDto reservationsDto = objectMapper.readValue(event.getBody(), ReservationsDto.class);
+            System.out.println(getClass() + " " + "reservationsDto " + reservationsDto);
             Map<String, AttributeValue> reservationPutItem = getReservationPutItem(reservationsDto);
+            System.out.println(getClass() + " reservationPutItem " + reservationPutItem);
             PutItemResult putItemResult = client.putItem(PREFIX + RESERVATIONS_TABLE_NAME + SUFFIX, reservationPutItem);
+            System.out.println(getClass() + " putItemResult " + putItemResult);
             ReservationsResponse reservationsResponse = new ReservationsResponse();
             String reservationId = putItemResult.getAttributes().get("reservationId").getS();
             reservationsResponse.setReservationId(reservationId);
+            System.out.println(getClass() + " reservationsResponse " + reservationsResponse);
             return new APIGatewayProxyResponseEvent().withBody(objectMapper.writeValueAsString(reservationsResponse));
         } catch (IOException e) {
+            System.out.println(getClass() + " " + e.getMessage());
             return new APIGatewayProxyResponseEvent();
         }
     }
@@ -53,6 +58,7 @@ public class HandlerReservation implements BaseAPIHandler {
         try {
             CognitoUtils.authenticateUser(event);
             List<ReservationsDto> reservations = getReservations();
+            System.out.println(getClass() + " reservations " + reservations);
             return new APIGatewayProxyResponseEvent().withBody(objectMapper.writeValueAsString(reservations));
         } catch (JsonProcessingException e) {
             return new APIGatewayProxyResponseEvent();
@@ -78,6 +84,7 @@ public class HandlerReservation implements BaseAPIHandler {
         reservationItem.put("date", new AttributeValue().withS(reservationsDto.getDate()));
         reservationItem.put("slotTimeStart", new AttributeValue().withS(reservationsDto.getSlotTimeStart()));
         reservationItem.put("slotTimeEnd", new AttributeValue().withS(reservationsDto.getSlotTimeEnd()));
+        System.out.println(getClass() + " reservationItem " + reservationItem);
         return reservationItem;
     }
 
@@ -94,6 +101,7 @@ public class HandlerReservation implements BaseAPIHandler {
         reservationsDto.setDate(reservation.get("date").getS());
         reservationsDto.setSlotTimeStart(reservation.get("slotTimeStart").getS());
         reservationsDto.setSlotTimeEnd(reservation.get("slotTimeEnd").getS());
+        System.out.println(getClass() + " reservationsDto " + reservationsDto);
         return reservationsDto;
     }
 }
