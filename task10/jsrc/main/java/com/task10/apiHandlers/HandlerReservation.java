@@ -37,18 +37,18 @@ public class HandlerReservation implements BaseAPIHandler {
         try {
             CognitoUtils.authenticateUser(event);
             ReservationsDto reservationsDto = objectMapper.readValue(event.getBody(), ReservationsDto.class);
-            System.out.println(getClass() + " " + "reservationsDto " + reservationsDto);
+            System.out.println(getClass()+ " 40 reservationsDto " + reservationsDto);
             Map<String, AttributeValue> reservationPutItem = getReservationPutItem(reservationsDto);
-            System.out.println(getClass() + " reservationPutItem " + reservationPutItem);
+            System.out.println(getClass() + " 42 reservationPutItem " + reservationPutItem);
             PutItemResult putItemResult = client.putItem(PREFIX + RESERVATIONS_TABLE_NAME + SUFFIX, reservationPutItem);
-            System.out.println(getClass() + " putItemResult " + putItemResult);
+            System.out.println(getClass() + "44  putItemResult " + putItemResult);
             ReservationsResponse reservationsResponse = new ReservationsResponse();
             String reservationId = putItemResult.getAttributes().get("reservationId").getS();
             reservationsResponse.setReservationId(reservationId);
-            System.out.println(getClass() + " reservationsResponse " + reservationsResponse);
+            System.out.println(getClass() + " 48 reservationsResponse " + reservationsResponse);
             return new APIGatewayProxyResponseEvent().withBody(objectMapper.writeValueAsString(reservationsResponse));
         } catch (IOException e) {
-            System.out.println(getClass() + " " + e.getMessage());
+            System.out.println(getClass() + " 51 " + e.getMessage());
             return new APIGatewayProxyResponseEvent();
         }
     }
@@ -58,15 +58,17 @@ public class HandlerReservation implements BaseAPIHandler {
         try {
             CognitoUtils.authenticateUser(event);
             List<ReservationsDto> reservations = getReservations();
-            System.out.println(getClass() + " reservations " + reservations);
+            System.out.println(getClass() + " 61 reservations " + reservations);
             return new APIGatewayProxyResponseEvent().withBody(objectMapper.writeValueAsString(reservations));
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
+            System.out.println(getClass() + " 64 Exception " + e.getMessage());
             return new APIGatewayProxyResponseEvent();
         }
     }
 
     @Override
     public APIGatewayProxyResponseEvent handleGetWithAttributes(APIGatewayProxyRequestEvent event) {
+        System.out.println(getClass() + " 71 handleGetWithAttributes " + event);
         return null;
     }
 
@@ -76,6 +78,7 @@ public class HandlerReservation implements BaseAPIHandler {
     }
 
     private Map<String, AttributeValue> getReservationPutItem(ReservationsDto reservationsDto) {
+        System.out.println(getClass() + " 81 reservationsDto " + reservationsDto);
         HashMap<String, AttributeValue> reservationItem = new HashMap<>();
         reservationItem.put("reservationId", new AttributeValue().withN(UUID.randomUUID().toString()));
         reservationItem.put("tableNumber", new AttributeValue().withN(String.valueOf(reservationsDto.getTableNumber())));
@@ -84,12 +87,13 @@ public class HandlerReservation implements BaseAPIHandler {
         reservationItem.put("date", new AttributeValue().withS(reservationsDto.getDate()));
         reservationItem.put("slotTimeStart", new AttributeValue().withS(reservationsDto.getSlotTimeStart()));
         reservationItem.put("slotTimeEnd", new AttributeValue().withS(reservationsDto.getSlotTimeEnd()));
-        System.out.println(getClass() + " reservationItem " + reservationItem);
+        System.out.println(getClass() + " 90 reservationItem " + reservationItem);
         return reservationItem;
     }
 
     public List<ReservationsDto> getReservations() {
         ScanRequest scanRequest = new ScanRequest().withTableName(PREFIX + RESERVATIONS_TABLE_NAME + SUFFIX);
+        System.out.println(getClass() + " 96 scanRequest " + scanRequest);
         return client.scan(scanRequest).getItems().stream().map(this::mapFromItemToReservation).collect(Collectors.toList());
     }
 
