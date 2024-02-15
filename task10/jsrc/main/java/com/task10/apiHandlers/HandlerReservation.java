@@ -41,10 +41,9 @@ public class HandlerReservation implements BaseAPIHandler {
             Map<String, AttributeValue> reservationPutItem = getReservationPutItem(reservationsDto);
             System.out.println(getClass() + " 42 reservationPutItem " + reservationPutItem);
             PutItemResult putItemResult = client.putItem(PREFIX + RESERVATIONS_TABLE_NAME + SUFFIX, reservationPutItem);
-            System.out.println(getClass() + "44  putItemResult " + putItemResult);
+            System.out.println(getClass() + " 44 putItemResult " + putItemResult);
             ReservationsResponse reservationsResponse = new ReservationsResponse();
-            String reservationId = putItemResult.getAttributes().get("reservationId").getS();
-            reservationsResponse.setReservationId(reservationId);
+            reservationsResponse.setReservationId(String.valueOf(reservationPutItem.get("reservationId")));
             System.out.println(getClass() + " 48 reservationsResponse " + reservationsResponse);
             return new APIGatewayProxyResponseEvent().withBody(objectMapper.writeValueAsString(reservationsResponse));
         } catch (IOException e) {
