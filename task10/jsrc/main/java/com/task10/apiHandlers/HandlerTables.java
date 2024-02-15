@@ -98,11 +98,11 @@ public class HandlerTables implements BaseAPIHandler {
 
     private Map<String, AttributeValue> getTablesPutItem(Table table) {
         HashMap<String, AttributeValue> tableItem = new HashMap<>();
-        tableItem.put("id", new AttributeValue().withS(String.valueOf(table.getId())));
-        tableItem.put("number", new AttributeValue().withS(String.valueOf(table.getNumber())));
-        tableItem.put("places", new AttributeValue().withS(String.valueOf(table.getPlaces())));
-        tableItem.put("isVip", new AttributeValue().withS(String.valueOf(table.isVip())));
-        tableItem.put("minOrder", new AttributeValue().withS(String.valueOf(table.getMinOrder())));
+        tableItem.put("id", new AttributeValue().withN(String.valueOf(table.getId())));
+        tableItem.put("number", new AttributeValue().withN(String.valueOf(table.getNumber())));
+        tableItem.put("places", new AttributeValue().withN(String.valueOf(table.getPlaces())));
+        tableItem.put("isVip", new AttributeValue().withBOOL(table.isVip()));
+        tableItem.put("minOrder", new AttributeValue().withN(String.valueOf(table.getMinOrder())));
         return tableItem;
     }
 

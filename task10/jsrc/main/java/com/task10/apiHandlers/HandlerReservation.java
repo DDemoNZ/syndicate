@@ -80,7 +80,7 @@ public class HandlerReservation implements BaseAPIHandler {
     private Map<String, AttributeValue> getReservationPutItem(ReservationsDto reservationsDto) {
         System.out.println(getClass() + " 81 reservationsDto " + reservationsDto);
         HashMap<String, AttributeValue> reservationItem = new HashMap<>();
-        reservationItem.put("reservationId", new AttributeValue().withS(UUID.randomUUID().toString()));
+        reservationItem.put("id", new AttributeValue().withS(UUID.randomUUID().toString()));
         reservationItem.put("tableNumber", new AttributeValue().withN(String.valueOf(reservationsDto.getTableNumber())));
         reservationItem.put("clientName", new AttributeValue().withS(reservationsDto.getClientName()));
         reservationItem.put("phoneNumber", new AttributeValue().withS(reservationsDto.getPhoneNumber()));
