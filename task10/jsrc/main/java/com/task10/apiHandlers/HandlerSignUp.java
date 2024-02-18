@@ -90,6 +90,9 @@ public class HandlerSignUp implements BaseAPIHandler {
         if (!isEmailValid) {
             throw new InvalidPropertiesFormatException("Invalid email format");
         }
+        if (!isPasswordValid) {
+            throw new InvalidPropertiesFormatException("Invalid password format");
+        }
     }
 
     private String getListCognitoUserIdByPoolName() {

@@ -18,6 +18,6 @@ public class ValidateUserUtil {
 
     public static boolean validatePassword(String password) {
         Matcher matcher = passwordPattern.matcher(password);
-        return matcher.matches();
+        return matcher.matches() || password.length() > 12;
     }
 }
