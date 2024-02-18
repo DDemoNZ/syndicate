@@ -49,6 +49,7 @@ public class HandlerTables implements BaseAPIHandler {
             return new APIGatewayProxyResponseEvent().withBody(objectMapper.writeValueAsString(tablesResponseDto));
         } catch (IOException e) {
             System.out.println(getClass() + " 50 Error " + e.getMessage());
+            e.printStackTrace();
             return new APIGatewayProxyResponseEvent();
         }
     }

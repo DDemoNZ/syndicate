@@ -13,4 +13,16 @@ public class Table {
     private int places;
     private boolean isVip;
     private int minOrder;
+
+    public boolean isVip() {
+        return isVip;
+    }
+
+    public boolean getVip() {
+        return isVip;
+    }
+
+    public void setVip(boolean vip) {
+        isVip = vip;
+    }
 }
