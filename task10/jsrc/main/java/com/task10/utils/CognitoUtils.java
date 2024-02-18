@@ -7,6 +7,7 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class CognitoUtils {
@@ -34,8 +35,14 @@ public class CognitoUtils {
     }
 
     public static void authenticateUser(APIGatewayProxyRequestEvent event) {
+        Map<String, String> headers = event.getHeaders();
+        System.out.println("CognitoUtils" + " 39 headers " + headers);
+        String authorization = headers.get("Authorization");
+        System.out.println("CognitoUtils 41 " + authorization);
+        String token = authorization.split(" ")[1];
+        System.out.println("CognitoUtils 43 " + token);
         cognitoIdentityProviderClient.getUser(GetUserRequest.builder()
-                .accessToken(event.getHeaders().get("Authorization").split(" ")[1])
+                .accessToken(token)
                 .build());
     }
 

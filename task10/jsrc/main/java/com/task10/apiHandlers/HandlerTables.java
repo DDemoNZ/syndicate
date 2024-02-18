@@ -35,7 +35,7 @@ public class HandlerTables implements BaseAPIHandler {
     public APIGatewayProxyResponseEvent handlePost(APIGatewayProxyRequestEvent event) {
         try {
             System.out.println(getClass() + " 36 handlePost " + event);
-//            CognitoUtils.authenticateUser(event);
+            CognitoUtils.authenticateUser(event);
             Table table = objectMapper.readValue(event.getBody(), Table.class);
             System.out.println(getClass() + " 39 Table " + table);
             Map<String, AttributeValue> tablesPutItem = getTablesPutItem(table);
@@ -58,7 +58,7 @@ public class HandlerTables implements BaseAPIHandler {
     public APIGatewayProxyResponseEvent handleGet(APIGatewayProxyRequestEvent event) {
         try {
             System.out.println(getClass() + " 58 handleGet " + event);
-//            CognitoUtils.authenticateUser(event);
+            CognitoUtils.authenticateUser(event);
             List<Table> tablesFromScan = getTablesFromScan();
             System.out.println(getClass() + " 61 tablesFromScan " + tablesFromScan);
             TablesResponseDto tablesResponseDto = new TablesResponseDto();
