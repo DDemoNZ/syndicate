@@ -103,7 +103,7 @@ public class HandlerTables implements BaseAPIHandler {
         tableItem.put("id", new AttributeValue().withN(String.valueOf(table.getId())));
         tableItem.put("number", new AttributeValue().withN(String.valueOf(table.getNumber())));
         tableItem.put("places", new AttributeValue().withN(String.valueOf(table.getPlaces())));
-        tableItem.put("isVip", new AttributeValue().withBOOL(table.isVip()));
+        tableItem.put("isVip", new AttributeValue().withBOOL(table.getIsVip()));
         tableItem.put("minOrder", new AttributeValue().withN(String.valueOf(table.getMinOrder())));
         return tableItem;
     }
@@ -122,9 +122,9 @@ public class HandlerTables implements BaseAPIHandler {
         Table table = new Table();
         table.setId(Integer.parseInt(item.get("id").getN()));
         table.setNumber(Integer.parseInt(item.get("number").getN()));
-        table.setMinOrder(Integer.parseInt(item.get("places").getN()));
-        table.setVip(item.get("isVip").getBOOL());
-        table.setPlaces(Integer.parseInt(item.get("minOrder").getN()));
+        table.setPlaces(Integer.parseInt(item.get("places").getN()));
+        table.setIsVip(item.get("isVip").getBOOL());
+        table.setMinOrder(Integer.parseInt(item.get("minOrder").getN()));
         System.out.println(getClass() + " 126 table " + table);
         return table;
     }

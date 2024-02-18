@@ -14,7 +14,7 @@ public class Table {
     private int number;
     private int places;
     @JsonProperty("isVip")
-    private boolean isVip;
+    private Boolean isVip;
     private int minOrder;
 
 }
