@@ -43,7 +43,7 @@ public class HandlerTables implements BaseAPIHandler {
             System.out.println(getClass() + " 43 putItemResult " + putItemResult);
             TablesResponseDto tablesResponseDto = new TablesResponseDto();
             System.out.println(getClass() + " 45 tablesResponseDto " + tablesResponseDto);
-            tablesResponseDto.setId(Integer.parseInt(putItemResult.getAttributes().get("id").getN()));
+            tablesResponseDto.setId(table.getId());
             System.out.println(getClass() + " 47 tablesResponseDto " + tablesResponseDto);
             return new APIGatewayProxyResponseEvent().withBody(objectMapper.writeValueAsString(tablesResponseDto));
         } catch (IOException e) {
