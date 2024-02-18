@@ -34,9 +34,9 @@ public class CognitoUtils {
     }
 
     public static void authenticateUser(APIGatewayProxyRequestEvent event) {
-//        cognitoIdentityProviderClient.getUser(GetUserRequest.builder()
-//                .accessToken(event.getHeaders().get("Authorization"))
-//                .build());
+        cognitoIdentityProviderClient.getUser(GetUserRequest.builder()
+                .accessToken(event.getHeaders().get("Authorization").split(" ")[1])
+                .build());
     }
 
     public static String getCognitoClientId(String cognitoPoolId) {

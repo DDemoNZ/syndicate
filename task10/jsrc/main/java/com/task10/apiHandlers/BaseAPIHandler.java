@@ -12,7 +12,7 @@ public interface BaseAPIHandler {
         if (HTTP_METHOD_GET.equals(requestEvent.getHttpMethod())) {
             System.out.println(getClass() + "requestEvent.getResource() " + requestEvent.getResource());
             System.out.println(getClass() + "requestEvent.getHttpMethod() " + requestEvent.getHttpMethod());
-            if (requestEvent.getPath().matches("/\\w+/.+")) {
+            if (requestEvent.getPath().matches("/\\d+")) {
                 System.out.println(getClass() + "attributes");
                 return handleGetWithAttributes(requestEvent);
             }

@@ -35,7 +35,7 @@ public class HandlerReservation implements BaseAPIHandler {
     @Override
     public APIGatewayProxyResponseEvent handlePost(APIGatewayProxyRequestEvent event) {
         try {
-            CognitoUtils.authenticateUser(event);
+//            CognitoUtils.authenticateUser(event);
             ReservationsDto reservationsDto = objectMapper.readValue(event.getBody(), ReservationsDto.class);
             System.out.println(getClass()+ " 40 reservationsDto " + reservationsDto);
             Map<String, AttributeValue> reservationPutItem = getReservationPutItem(reservationsDto);
@@ -55,7 +55,7 @@ public class HandlerReservation implements BaseAPIHandler {
     @Override
     public APIGatewayProxyResponseEvent handleGet(APIGatewayProxyRequestEvent event) {
         try {
-            CognitoUtils.authenticateUser(event);
+//            CognitoUtils.authenticateUser(event);
             List<ReservationsDto> reservations = getReservations();
             System.out.println(getClass() + " 61 reservations " + reservations);
             return new APIGatewayProxyResponseEvent().withBody(objectMapper.writeValueAsString(reservations));
