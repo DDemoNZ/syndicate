@@ -7,6 +7,6 @@ public class Table {
     private int id;
     private int number;
     private int places;
-    private boolean vip;
+    private boolean isVip;
     private int minOrder;
 }
