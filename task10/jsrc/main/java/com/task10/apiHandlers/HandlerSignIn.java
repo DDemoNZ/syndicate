@@ -47,7 +47,7 @@ public class HandlerSignIn implements BaseAPIHandler {
                 System.out.println(getClass() + "user.sdkHttpResponse().isSuccessful() " + adminInitiateAuthResponse.sdkHttpResponse().isSuccessful());
                 return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_BAD_REQUEST);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println(getClass() + "ERROR SIGN IN");
             return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_BAD_REQUEST);
         }

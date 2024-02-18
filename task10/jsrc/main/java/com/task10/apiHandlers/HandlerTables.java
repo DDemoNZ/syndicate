@@ -10,6 +10,7 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.task10.models.Table;
+import com.task10.models.TablesCreateResponseDto;
 import com.task10.models.TablesResponseDto;
 import com.task10.utils.CognitoUtils;
 import com.task10.utils.DynamoDBUtils;
@@ -41,7 +42,7 @@ public class HandlerTables implements BaseAPIHandler {
             System.out.println(getClass() + " 41 tablesPutItem map " + tablesPutItem);
             PutItemResult putItemResult = client.putItem(PREFIX + TABLES_TABLE_NAME + SUFFIX, tablesPutItem);
             System.out.println(getClass() + " 43 putItemResult " + putItemResult);
-            TablesResponseDto tablesResponseDto = new TablesResponseDto();
+            TablesCreateResponseDto tablesResponseDto = new TablesCreateResponseDto();
             System.out.println(getClass() + " 45 tablesResponseDto " + tablesResponseDto);
             tablesResponseDto.setId(table.getId());
             System.out.println(getClass() + " 47 tablesResponseDto " + tablesResponseDto);
