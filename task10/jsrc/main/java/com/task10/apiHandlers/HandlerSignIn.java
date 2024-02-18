@@ -57,9 +57,12 @@ public class HandlerSignIn implements BaseAPIHandler {
         HashMap<String, String> authParameters = new HashMap<>();
         authParameters.put("USERNAME", event.getEmail());
         authParameters.put("PASSWORD", event.getPassword());
+        System.out.println(getClass() + " 60 " + authParameters);
+        System.out.println(getClass() + " 61 " + event);
         return cognitoClient.adminInitiateAuth(AdminInitiateAuthRequest.builder()
                 .userPoolId(cognitoId)
-                .authFlow(AuthFlowType.ADMIN_USER_PASSWORD_AUTH)
+//                .authFlow(AuthFlowType.ADMIN_USER_PASSWORD_AUTH)
+                .authFlow(AuthFlowType.ADMIN_NO_SRP_AUTH)
                 .clientId(CognitoUtils.getCognitoClientId(cognitoId))
                 .authParameters(authParameters)
                 .build());
