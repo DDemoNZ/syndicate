@@ -16,6 +16,8 @@ public interface BaseAPIHandler {
             System.out.println(getClass() + "requestEvent.getHttpMethod() " + requestEvent.getHttpMethod());
             System.out.println(getClass() + "requestEvent.getHttpMethod() " + requestEvent.getPath());
             System.out.println(getClass() + " request with attributes " + requestEvent.getPath().matches("/\\d+"));
+            Map<String, String> attributesMap1 = requestEvent.getPathParameters();
+            System.out.println(getClass() + " attributes1 " + attributesMap1);
             if (requestEvent.getPath().matches("/\\d+")) {
                 System.out.println(getClass() + " request with attributes");
                 Map<String, String> attributesMap = requestEvent.getPathParameters();
