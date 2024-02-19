@@ -8,7 +8,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.task10.models.Table;
 import com.task10.models.TablesCreateResponseDto;
-import com.task10.models.TablesResponseDto;
+import com.task10.models.TableResponseDto;
+import com.task10.models.TablesDtoResponse;
 import com.task10.utils.DynamoDBUtils;
 import lombok.Data;
 
@@ -57,7 +58,7 @@ public class HandlerTables implements BaseAPIHandler {
 //            CognitoUtils.authenticateUser(event);
             List<Table> tablesFromScan = getTablesFromScan();
             System.out.println(getClass() + " 61 tablesFromScan " + tablesFromScan);
-            TablesResponseDto tablesResponseDto = new TablesResponseDto();
+            TablesDtoResponse tablesResponseDto = new TablesDtoResponse();
             System.out.println(getClass() + " 63 tablesResponseDto " + tablesResponseDto);
             tablesResponseDto.setTables(tablesFromScan);
             System.out.println(getClass() + " 65 tablesResponseDto " + tablesResponseDto);
@@ -76,7 +77,7 @@ public class HandlerTables implements BaseAPIHandler {
             System.out.println(getClass() + " 78 tableId " + tableId);
             Table table = getTablesFromById(tableId);
             System.out.println(getClass() + " 82 tables " + table);
-            TablesResponseDto tablesResponseDto = new TablesResponseDto();
+            TableResponseDto tablesResponseDto = new TableResponseDto();
             tablesResponseDto.setTable(table);
             System.out.println(getClass() + " 85 tablesResponseDto " + tablesResponseDto);
             System.out.println(getClass() + " 86 TABLES " + tablesResponseDto);
