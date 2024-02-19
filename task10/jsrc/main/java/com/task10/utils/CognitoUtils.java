@@ -16,7 +16,8 @@ public class CognitoUtils {
     private static CognitoIdentityProviderClient cognitoIdentityProviderClient = CognitoIdentityProviderClient.create();
 
     private static CognitoIdentityProviderClient buildCognitoClient() {
-        return CognitoIdentityProviderClient.create();
+//        return CognitoIdentityProviderClient.create();
+        return CognitoIdentityProviderClient.builder().build();
     }
 
     public static CognitoIdentityProviderClient getCognitoClient() {

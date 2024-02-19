@@ -100,11 +100,14 @@ public class HandlerSignUp implements BaseAPIHandler {
     }
 
     private String getListCognitoUserIdByPoolName() {
-        return cognitoClient.listUserPools(ListUserPoolsRequest.builder().build())
+        String cognitoPoolId = cognitoClient.listUserPools(ListUserPoolsRequest.builder().build())
                 .userPools().stream()
                 .filter(userPool -> (PREFIX + COGNITO_POOL_NAME + SUFFIX).equals(userPool.name()))
+                .findFirst()
                 .map(UserPoolDescriptionType::id)
-                .findFirst().orElse(null);
+                .orElse(null);
+        System.out.println(getClass() + " 109 " + cognitoPoolId);
+        return cognitoPoolId;
     }
 
     @Override
