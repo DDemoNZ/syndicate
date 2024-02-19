@@ -77,11 +77,7 @@ public class HandlerTables implements BaseAPIHandler {
             System.out.println(getClass() + " 78 tableId " + tableId);
             Table table = getTablesFromById(tableId);
             System.out.println(getClass() + " 82 tables " + table);
-            TableResponseDto tablesResponseDto = new TableResponseDto();
-            tablesResponseDto.setTable(table);
-            System.out.println(getClass() + " 85 tablesResponseDto " + tablesResponseDto);
-            System.out.println(getClass() + " 86 TABLES " + tablesResponseDto);
-            return new APIGatewayProxyResponseEvent().withBody(objectMapper.writeValueAsString(tablesResponseDto));
+            return new APIGatewayProxyResponseEvent().withBody(objectMapper.writeValueAsString(table));
         } catch (Exception e) {
             System.out.println(getClass() + " 89 Exception " + e.getMessage());
             return new APIGatewayProxyResponseEvent();
