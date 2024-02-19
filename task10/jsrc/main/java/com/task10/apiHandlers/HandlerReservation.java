@@ -32,6 +32,7 @@ public class HandlerReservation implements BaseAPIHandler {
         try {
 //            CognitoUtils.authenticateUser(event);
             ReservationsRequestDto reservationsRequestDto = objectMapper.readValue(event.getBody(), ReservationsRequestDto.class);
+            reservationsRequestDto.setId(UUID.randomUUID().toString());
             System.out.println(getClass()+ " 40 reservationsDto " + reservationsRequestDto);
             Map<String, AttributeValue> reservationPutItem = getReservationPutItem(reservationsRequestDto);
             System.out.println(getClass() + " 42 reservationPutItem " + reservationPutItem);
@@ -74,7 +75,7 @@ public class HandlerReservation implements BaseAPIHandler {
     private Map<String, AttributeValue> getReservationPutItem(ReservationsRequestDto reservationsRequestDto) {
         System.out.println(getClass() + " 81 reservationsDto " + reservationsRequestDto);
         HashMap<String, AttributeValue> reservationItem = new HashMap<>();
-        reservationItem.put("id", new AttributeValue().withS(UUID.randomUUID().toString()));
+        reservationItem.put("id", new AttributeValue().withS(reservationsRequestDto.getId()));
         reservationItem.put("tableNumber", new AttributeValue().withN(String.valueOf(reservationsRequestDto.getTableNumber())));
         reservationItem.put("clientName", new AttributeValue().withS(reservationsRequestDto.getClientName()));
         reservationItem.put("phoneNumber", new AttributeValue().withS(reservationsRequestDto.getPhoneNumber()));
