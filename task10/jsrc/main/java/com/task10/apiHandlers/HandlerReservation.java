@@ -46,7 +46,7 @@ public class HandlerReservation implements BaseAPIHandler {
             reservationsResponse.setReservationId(String.valueOf(reservationPutItem.get("reservationId")));
             System.out.println(getClass() + " 48 reservationsResponse " + reservationsResponse);
             return new APIGatewayProxyResponseEvent().withBody(objectMapper.writeValueAsString(reservationsResponse));
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println(getClass() + " 51 " + e.getMessage());
             return new APIGatewayProxyResponseEvent();
         }

@@ -70,10 +70,9 @@ public class HandlerSignUp implements BaseAPIHandler {
                 .username(signUpRequestDto.getEmail())
                 .temporaryPassword(signUpRequestDto.getPassword())
                 .userAttributes(
-                        AttributeType.builder().name("firstName").value(signUpRequestDto.getFirstName()).build(),
-                        AttributeType.builder().name("lastName").value(signUpRequestDto.getLastName()).build(),
                         AttributeType.builder().name("email").value(signUpRequestDto.getEmail()).build(),
-                        AttributeType.builder().name("password").value(signUpRequestDto.getPassword()).build()
+                        AttributeType.builder().name("given_name").value(signUpRequestDto.getFirstName()).build(),
+                        AttributeType.builder().name("family_name").value(signUpRequestDto.getLastName()).build()
                 )
                 .messageAction(MessageActionType.SUPPRESS)
                 .build());
