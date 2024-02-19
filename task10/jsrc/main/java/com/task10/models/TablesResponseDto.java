@@ -7,6 +7,6 @@ import java.util.List;
 @Data
 public class TablesResponseDto {
 
-    private List<Table> tables;
+    private Table table;
 
 }

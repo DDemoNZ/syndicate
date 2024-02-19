@@ -1,10 +1,7 @@
 package com.task10.apiHandlers;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.PutItemResult;
-import com.amazonaws.services.dynamodbv2.model.ScanRequest;
-import com.amazonaws.services.dynamodbv2.model.ScanResult;
+import com.amazonaws.services.dynamodbv2.model.*;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.task10.models.Table;
 import com.task10.models.TablesCreateResponseDto;
 import com.task10.models.TablesResponseDto;
-import com.task10.utils.CognitoUtils;
 import com.task10.utils.DynamoDBUtils;
 import lombok.Data;
 
@@ -78,12 +74,10 @@ public class HandlerTables implements BaseAPIHandler {
 //            CognitoUtils.authenticateUser(event);
             String tableId = event.getPathParameters().get("tableId");
             System.out.println(getClass() + " 78 tableId " + tableId);
-            List<Table> tables = getTablesFromScan().stream()
-                    .filter(table -> table.getId() == Integer.parseInt(tableId))
-                    .collect(Collectors.toList());
-            System.out.println(getClass() + " 82 tables " + tables);
+            Table table = getTablesFromById(tableId);
+            System.out.println(getClass() + " 82 tables " + table);
             TablesResponseDto tablesResponseDto = new TablesResponseDto();
-            tablesResponseDto.setTables(tables);
+            tablesResponseDto.setTable(table);
             System.out.println(getClass() + " 85 tablesResponseDto " + tablesResponseDto);
             System.out.println(getClass() + " 86 TABLES " + tablesResponseDto);
             return new APIGatewayProxyResponseEvent().withBody(objectMapper.writeValueAsString(tablesResponseDto));
@@ -116,6 +110,14 @@ public class HandlerTables implements BaseAPIHandler {
         return scanResult.getItems().stream()
                 .map(this::parseToTable)
                 .collect(Collectors.toList());
+    }
+    private Table getTablesFromById(String tableId) {
+        HashMap<String, AttributeValue> getItemRequestAttributes = new HashMap<>();
+        getItemRequestAttributes.put("id", new AttributeValue().withN(tableId));
+        GetItemRequest getItemRequest = new GetItemRequest().withKey(getItemRequestAttributes)
+                .withTableName(PREFIX + TABLES_TABLE_NAME + SUFFIX);
+        GetItemResult getItemResult = client.getItem(getItemRequest);
+        return parseToTable(getItemResult.getItem());
     }
 
     private Table parseToTable(Map<String, AttributeValue> item) {
