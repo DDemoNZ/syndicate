@@ -23,7 +23,7 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
 
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
         logger = context.getLogger();
-        System.out.println(getClass() + "25: Path: " + request.getHttpMethod() + " " + request.getResource() + " " + request.getPath());
+        System.out.println(getClass() + "25 Path " + request.getHttpMethod() + " " + request.getResource() + " " + request.getPath());
         System.out.println(getClass() + "27: Request: " + request.toString());
         System.out.println(getClass() + "28: handlers: " + handlers.keySet());
         System.out.println(getClass() + "29 Handler for " + request.getResource().split("/")[1]);
@@ -33,6 +33,8 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
         System.out.println(getClass() + "34: handlers values: " + handlers.values());
         System.out.println(getClass() + "35 handler key " +request.getResource().split("/")[1]);
         System.out.println(getClass() + "36 handler is present? " + handlers.containsKey(request.getResource().split("/")[1]));
+        Map<String, String> pathParameters = request.getPathParameters();
+        System.out.println(getClass() + " 37 " + pathParameters);
         BaseAPIHandler handler = handlers.get(request.getResource().split("/")[1]);
         try {
             logger.log("Call handler for " + handler);
