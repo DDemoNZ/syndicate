@@ -120,7 +120,7 @@ public class HandlerReservation implements BaseAPIHandler {
 
     private void checkReservationOverlap(ReservationsRequestDto newReservation) {
         client.scan(new ScanRequest()
-                        .withTableName(PREFIX + COGNITO_POOL_NAME + SUFFIX))
+                        .withTableName(PREFIX + RESERVATIONS_TABLE_NAME + SUFFIX))
                 .getItems().stream()
                 .map(this::mapToReservation)
                 .filter(reservation -> checkOverlap(reservation, newReservation))
