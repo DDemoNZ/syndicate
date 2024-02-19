@@ -47,12 +47,15 @@ public class CognitoUtils {
     }
 
     public static String getCognitoClientId(String cognitoPoolId) {
-        ListUserPoolClientsRequest clientsRequest = ListUserPoolClientsRequest.builder().userPoolId(cognitoPoolId).build();
-        List<UserPoolClientDescription> userPoolClientDescriptions = cognitoClient.listUserPoolClients(clientsRequest).userPoolClients();
-        String clientId = null;
-        for (UserPoolClientDescription r : userPoolClientDescriptions) {
-            clientId = r.clientId();
-        }
+        ListUserPoolClientsRequest clientsRequest = ListUserPoolClientsRequest.builder()
+                .userPoolId(cognitoPoolId)
+                .build();
+        System.out.println("CognitoUtils " + clientsRequest);
+        List<UserPoolClientDescription> userPoolClientDescriptions = cognitoClient.listUserPoolClients(clientsRequest)
+                .userPoolClients();
+        System.out.println("CognitoUtils " + userPoolClientDescriptions);
+        String clientId = userPoolClientDescriptions.get(0).clientId();
+        System.out.println("CognitoUtils " + clientId);
         return clientId;
     }
 
