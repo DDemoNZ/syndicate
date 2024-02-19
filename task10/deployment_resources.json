@@ -56,7 +56,7 @@
       "/signin": {
         "enable_cors": false,
         "POST": {
-          "authorization_type": "NONE",
+          "authorization_type": "authorizer",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
@@ -71,7 +71,7 @@
       "/signup": {
         "enable_cors": false,
         "POST": {
-          "authorization_type": "NONE",
+          "authorization_type": "authorizer",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
@@ -86,7 +86,7 @@
       "/tables": {
         "enable_cors": false,
         "GET": {
-          "authorization_type": "NONE",
+          "authorization_type": "authorizer",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
@@ -98,7 +98,7 @@
           "enable_proxy": true
         },
         "POST": {
-          "authorization_type": "NONE",
+          "authorization_type": "authorizer",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
@@ -112,9 +112,10 @@
       },
       "/tables/{tableId}": {
         "enable_cors": false,
-        "POST": {
-          "authorization_type": "NONE",
+        "GET": {
+          "authorization_type": "authorizer",
           "integration_type": "lambda",
+          "integration_passthrough_behavior": "WHEN_NO_TEMPLATES",
           "lambda_name": "api_handler",
           "api_key_required": false,
           "method_request_parameters": {},
@@ -128,7 +129,7 @@
       "/reservations": {
         "enable_cors": false,
         "POST": {
-          "authorization_type": "NONE",
+          "authorization_type": "authorizer",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
@@ -140,7 +141,7 @@
           "enable_proxy": true
         },
         "GET": {
-          "authorization_type": "NONE",
+          "authorization_type": "authorizer",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
