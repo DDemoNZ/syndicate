@@ -51,19 +51,13 @@ public class HandlerSignUp implements BaseAPIHandler {
     }
 
     private void createUserPoolIfNotExists(String cognitoId) {
-        boolean poolExists = cognitoClient.listUserPoolClients(ListUserPoolClientsRequest.builder()
+        CreateUserPoolClientResponse createUserPoolClientResponse = cognitoClient.createUserPoolClient(CreateUserPoolClientRequest.builder()
                 .userPoolId(cognitoId)
-                .build())
-                .userPoolClients().isEmpty();
-        if (poolExists) {
-            CreateUserPoolClientResponse createUserPoolClientResponse = cognitoClient.createUserPoolClient(CreateUserPoolClientRequest.builder()
-                    .userPoolId(cognitoId)
-                    .clientName(PREFIX + COGNITO_POOL_NAME + SUFFIX)
-                    .explicitAuthFlows(ExplicitAuthFlowsType.ADMIN_NO_SRP_AUTH)
-                    .generateSecret(false)
-                    .build());
-            System.out.println("Create user pool client. Response " + createUserPoolClientResponse);
-        }
+                .clientName(PREFIX + COGNITO_POOL_NAME + SUFFIX)
+                .explicitAuthFlows(ExplicitAuthFlowsType.ADMIN_NO_SRP_AUTH)
+                .generateSecret(false)
+                .build());
+        System.out.println("Create user pool client. Response " + createUserPoolClientResponse);
     }
 
     //        private void createUser(SignUpRequestDto signUpRequestDto, String cognitoId) {
