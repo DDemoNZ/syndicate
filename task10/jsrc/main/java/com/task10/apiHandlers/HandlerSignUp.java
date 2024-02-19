@@ -30,8 +30,8 @@ public class HandlerSignUp implements BaseAPIHandler {
             SignUpRequestDto signUpRequestDto = objectMapper.readValue(body, SignUpRequestDto.class);
             String cognitoId = getListCognitoUserIdByPoolName();
             System.out.println(getClass() + " CognitoId " + cognitoId);
-//            AdminConfirmSignUpResponse user = createUser(signUpRequestDto, cognitoId);
-            AdminCreateUserResponse user = createUser(signUpRequestDto, cognitoId);
+            AdminConfirmSignUpResponse user = createUser(signUpRequestDto, cognitoId);
+//            AdminCreateUserResponse user = createUser(signUpRequestDto, cognitoId);
             System.out.println(getClass() + " user " + user);
             if (user.sdkHttpResponse().isSuccessful()) {
                 System.out.println(getClass() + " user.sdkHttpResponse().isSuccessful() " + user.sdkHttpResponse().isSuccessful());
@@ -47,43 +47,42 @@ public class HandlerSignUp implements BaseAPIHandler {
     }
 
     //    private void createUser(SignUpRequestDto signUpRequestDto, String cognitoId) {
-//    private AdminConfirmSignUpResponse createUser(SignUpRequestDto signUpRequestDto, String cognitoId) throws InvalidPropertiesFormatException {
-    private AdminCreateUserResponse createUser(SignUpRequestDto signUpRequestDto, String cognitoId) throws InvalidPropertiesFormatException {
+    private AdminConfirmSignUpResponse createUser(SignUpRequestDto signUpRequestDto, String cognitoId) throws InvalidPropertiesFormatException {
+//    private AdminCreateUserResponse createUser(SignUpRequestDto signUpRequestDto, String cognitoId) throws InvalidPropertiesFormatException {
         validateUser(signUpRequestDto);
-//        SignUpRequest signUpRequest = SignUpRequest.builder()
-//                .username(signUpRequestDto.getEmail())
-//                .password(signUpRequestDto.getPassword())
-//                .userAttributes(AttributeType.builder()
-//                        .name("firstName").value(signUpRequestDto.getFirstName())
-//                        .name("lastName").value(signUpRequestDto.getFirstName())
-//                        .name("email").value(signUpRequestDto.getEmail())
-//                        .build())
-//                .clientId(CognitoUtils.getCognitoClientId(cognitoId))
-//                .build();
-//        cognitoClient.signUp(signUpRequest);
-//        return cognitoClient.adminConfirmSignUp(AdminConfirmSignUpRequest.builder()
-//                .userPoolId(cognitoId)
-//                .username(signUpRequestDto.getEmail())
-//                .build());
-        AdminCreateUserResponse adminCreateUserResponse = cognitoClient.adminCreateUser(AdminCreateUserRequest.builder()
-                .userPoolId(cognitoId)
-                .username(signUpRequestDto.getEmail())
-                .temporaryPassword(signUpRequestDto.getPassword())
-                .userAttributes(
-                        AttributeType.builder().name("email").value(signUpRequestDto.getEmail()).build(),
-                        AttributeType.builder().name("given_name").value(signUpRequestDto.getFirstName()).build(),
-                        AttributeType.builder().name("family_name").value(signUpRequestDto.getLastName()).build()
-                )
-                .messageAction(MessageActionType.SUPPRESS)
-                .build());
-
-        cognitoClient.adminSetUserPassword(AdminSetUserPasswordRequest.builder()
-                .userPoolId(cognitoId)
+        SignUpRequest signUpRequest = SignUpRequest.builder()
                 .username(signUpRequestDto.getEmail())
                 .password(signUpRequestDto.getPassword())
-                .permanent(true)
+                .userAttributes(AttributeType.builder()
+                        .name("name").value(signUpRequestDto.getFirstName() + " " + signUpRequestDto.getFirstName())
+                        .name("email").value(signUpRequestDto.getEmail())
+                        .build())
+                .clientId(CognitoUtils.getCognitoClientId(cognitoId))
+                .build();
+        cognitoClient.signUp(signUpRequest);
+        return cognitoClient.adminConfirmSignUp(AdminConfirmSignUpRequest.builder()
+                .userPoolId(cognitoId)
+                .username(signUpRequestDto.getEmail())
                 .build());
-        return adminCreateUserResponse;
+//        AdminCreateUserResponse adminCreateUserResponse = cognitoClient.adminCreateUser(AdminCreateUserRequest.builder()
+//                .userPoolId(cognitoId)
+//                .username(signUpRequestDto.getEmail())
+//                .temporaryPassword(signUpRequestDto.getPassword())
+//                .userAttributes(
+//                        AttributeType.builder().name("email").value(signUpRequestDto.getEmail()).build(),
+//                        AttributeType.builder().name("given_name").value(signUpRequestDto.getFirstName()).build(),
+//                        AttributeType.builder().name("family_name").value(signUpRequestDto.getLastName()).build()
+//                )
+//                .messageAction(MessageActionType.SUPPRESS)
+//                .build());
+//
+//        cognitoClient.adminSetUserPassword(AdminSetUserPasswordRequest.builder()
+//                .userPoolId(cognitoId)
+//                .username(signUpRequestDto.getEmail())
+//                .password(signUpRequestDto.getPassword())
+//                .permanent(true)
+//                .build());
+//        return adminCreateUserResponse;
     }
 
     private void validateUser(SignUpRequestDto signUpRequestDto) throws InvalidPropertiesFormatException {
