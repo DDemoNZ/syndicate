@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.task10.models.Table;
 import com.task10.models.TablesCreateResponseDto;
-import com.task10.models.TableResponseDto;
 import com.task10.models.TablesDtoResponse;
 import com.task10.utils.DynamoDBUtils;
 import lombok.Data;
