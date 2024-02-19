@@ -56,7 +56,7 @@
       "/signin": {
         "enable_cors": false,
         "POST": {
-          "authorization_type": "authorizer",
+          "authorization_type": "NONE",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
