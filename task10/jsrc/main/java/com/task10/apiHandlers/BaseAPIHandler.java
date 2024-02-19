@@ -4,21 +4,23 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public interface BaseAPIHandler {
 
     String HTTP_METHOD_GET = "GET";
     String HTTP_METHOD_POST = "POST";
+    Pattern REQUEST_WITH_ATTRIBUTES_MATCHER = Pattern.compile("^/\\w+/\\w+$");
 
     default APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent requestEvent) throws NoSuchMethodException {
         if (HTTP_METHOD_GET.equals(requestEvent.getHttpMethod())) {
             System.out.println(getClass() + "requestEvent.getResource() " + requestEvent.getResource());
             System.out.println(getClass() + "requestEvent.getHttpMethod() " + requestEvent.getHttpMethod());
             System.out.println(getClass() + "requestEvent.getHttpMethod() " + requestEvent.getPath());
-            System.out.println(getClass() + " request with attributes " + requestEvent.getPath().matches("/\\d+"));
+            System.out.println(getClass() + " request with attributes " + REQUEST_WITH_ATTRIBUTES_MATCHER.matcher(requestEvent.getPath()).matches());
             Map<String, String> attributesMap1 = requestEvent.getPathParameters();
             System.out.println(getClass() + " attributes1 " + attributesMap1);
-            if (requestEvent.getPath().matches("/\\d+")) {
+            if (REQUEST_WITH_ATTRIBUTES_MATCHER.matcher(requestEvent.getPath()).matches()) {
                 System.out.println(getClass() + " request with attributes");
                 Map<String, String> attributesMap = requestEvent.getPathParameters();
                 System.out.println(getClass() + " attributes " + attributesMap);
