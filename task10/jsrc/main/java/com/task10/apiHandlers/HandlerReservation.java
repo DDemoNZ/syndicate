@@ -55,6 +55,7 @@ public class HandlerReservation implements BaseAPIHandler {
             return new APIGatewayProxyResponseEvent().withBody(objectMapper.writeValueAsString(reservationResponseDto));
         } catch (Exception e) {
             System.out.println(getClass() + " 51 " + e.getMessage());
+            e.printStackTrace();
             return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_BAD_REQUEST);
         }
     }
