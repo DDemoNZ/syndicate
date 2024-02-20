@@ -127,6 +127,7 @@ public class HandlerReservation implements BaseAPIHandler {
                         .withTableName(PREFIX + RESERVATIONS_TABLE_NAME + SUFFIX))
                 .getItems().stream()
                 .map(this::mapToReservation)
+                .filter(reservation -> reservation.getTableNumber() == newReservation.getTableNumber())
                 .filter(reservation -> checkOverlap(reservation, newReservation)).collect(Collectors.toList());
         System.out.println(getClass() + " 131 with overlap " + reservations);
         reservations.stream()
