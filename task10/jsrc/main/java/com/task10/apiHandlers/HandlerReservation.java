@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.task10.models.ReservationListResponseDto;
 import com.task10.models.ReservationResponseDto;
 import com.task10.models.ReservationsRequestDto;
 import com.task10.models.Table;
@@ -70,7 +71,9 @@ public class HandlerReservation implements BaseAPIHandler {
 //            CognitoUtils.authenticateUser(event);
             List<ReservationsRequestDto> reservations = getReservations();
             System.out.println(getClass() + " 61 reservations " + reservations);
-            return new APIGatewayProxyResponseEvent().withBody(objectMapper.writeValueAsString(reservations));
+            ReservationListResponseDto reservationListResponseDto = new ReservationListResponseDto();
+            reservationListResponseDto.setReservations(reservations);
+            return new APIGatewayProxyResponseEvent().withBody(objectMapper.writeValueAsString(reservationListResponseDto));
         } catch (Exception e) {
             System.out.println(getClass() + " 64 Exception " + e.getMessage());
             return new APIGatewayProxyResponseEvent();
