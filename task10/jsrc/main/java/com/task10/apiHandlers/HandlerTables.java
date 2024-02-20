@@ -10,6 +10,7 @@ import com.task10.models.Table;
 import com.task10.models.TablesCreateResponseDto;
 import com.task10.models.TablesDtoResponse;
 import com.task10.utils.DynamoDBUtils;
+import com.task10.utils.TableUtils;
 import lombok.Data;
 
 import java.io.IOException;
@@ -30,22 +31,22 @@ public class HandlerTables implements BaseAPIHandler {
     @Override
     public APIGatewayProxyResponseEvent handlePost(APIGatewayProxyRequestEvent event) {
         try {
-            System.out.println(getClass() + " 36 handlePost " + event);
+//            System.out.println(getClass() + " 36 handlePost " + event);
 //            CognitoUtils.authenticateUser(event);
             Table table = objectMapper.readValue(event.getBody(), Table.class);
-            System.out.println(getClass() + " 39 Table " + table);
+//            System.out.println(getClass() + " 39 Table " + table);
             Map<String, AttributeValue> tablesPutItem = getTablesPutItem(table);
-            System.out.println(getClass() + " 41 tablesPutItem map " + tablesPutItem);
+//            System.out.println(getClass() + " 41 tablesPutItem map " + tablesPutItem);
             PutItemResult putItemResult = client.putItem(PREFIX + TABLES_TABLE_NAME + SUFFIX, tablesPutItem);
-            System.out.println(getClass() + " 43 putItemResult " + putItemResult);
+//            System.out.println(getClass() + " 43 putItemResult " + putItemResult);
             TablesCreateResponseDto tablesResponseDto = new TablesCreateResponseDto();
-            System.out.println(getClass() + " 45 tablesResponseDto " + tablesResponseDto);
+//            System.out.println(getClass() + " 45 tablesResponseDto " + tablesResponseDto);
             tablesResponseDto.setId(table.getId());
-            System.out.println(getClass() + " 47 tablesResponseDto " + tablesResponseDto);
+//            System.out.println(getClass() + " 47 tablesResponseDto " + tablesResponseDto);
             return new APIGatewayProxyResponseEvent().withBody(objectMapper.writeValueAsString(tablesResponseDto));
         } catch (IOException e) {
-            System.out.println(getClass() + " 50 Error " + e.getMessage());
-            e.printStackTrace();
+//            System.out.println(getClass() + " 50 Error " + e.getMessage());
+//            e.printStackTrace();
             return new APIGatewayProxyResponseEvent();
         }
     }
@@ -53,14 +54,14 @@ public class HandlerTables implements BaseAPIHandler {
     @Override
     public APIGatewayProxyResponseEvent handleGet(APIGatewayProxyRequestEvent event) {
         try {
-            System.out.println(getClass() + " 58 handleGet " + event);
-//            CognitoUtils.authenticateUser(event);
+//            System.out.println(getClass() + " 58 handleGet " + event);
+////            CognitoUtils.authenticateUser(event);
             List<Table> tablesFromScan = getTablesFromScan();
             System.out.println(getClass() + " 61 tablesFromScan " + tablesFromScan);
             TablesDtoResponse tablesResponseDto = new TablesDtoResponse();
-            System.out.println(getClass() + " 63 tablesResponseDto " + tablesResponseDto);
+//            System.out.println(getClass() + " 63 tablesResponseDto " + tablesResponseDto);
             tablesResponseDto.setTables(tablesFromScan);
-            System.out.println(getClass() + " 65 tablesResponseDto " + tablesResponseDto);
+//            System.out.println(getClass() + " 65 tablesResponseDto " + tablesResponseDto);
             return new APIGatewayProxyResponseEvent().withBody(objectMapper.writeValueAsString(tablesResponseDto));
         } catch (JsonProcessingException e) {
             return new APIGatewayProxyResponseEvent();
@@ -70,15 +71,15 @@ public class HandlerTables implements BaseAPIHandler {
     @Override
     public APIGatewayProxyResponseEvent handleGetWithAttributes(APIGatewayProxyRequestEvent event) {
         try {
-            System.out.println(getClass() + " 75 handleGetWithAttributes " + event);
-//            CognitoUtils.authenticateUser(event);
+//            System.out.println(getClass() + " 75 handleGetWithAttributes " + event);
+////            CognitoUtils.authenticateUser(event);
             String tableId = event.getPathParameters().get("tableId");
-            System.out.println(getClass() + " 78 tableId " + tableId);
+//            System.out.println(getClass() + " 78 tableId " + tableId);
             Table table = getTablesFromById(tableId);
-            System.out.println(getClass() + " 82 tables " + table);
+//            System.out.println(getClass() + " 82 tables " + table);
             return new APIGatewayProxyResponseEvent().withBody(objectMapper.writeValueAsString(table));
         } catch (Exception e) {
-            System.out.println(getClass() + " 89 Exception " + e.getMessage());
+//            System.out.println(getClass() + " 89 Exception " + e.getMessage());
             return new APIGatewayProxyResponseEvent();
         }
     }
@@ -104,27 +105,18 @@ public class HandlerTables implements BaseAPIHandler {
         ScanResult scanResult = client.scan(scanRequest);
         System.out.println(getClass() + " 113 scanResult " + scanResult);
         return scanResult.getItems().stream()
-                .map(this::parseToTable)
+                .map(TableUtils::parseToTable)
                 .collect(Collectors.toList());
     }
+
     private Table getTablesFromById(String tableId) {
         HashMap<String, AttributeValue> getItemRequestAttributes = new HashMap<>();
         getItemRequestAttributes.put("id", new AttributeValue().withN(tableId));
         GetItemRequest getItemRequest = new GetItemRequest().withKey(getItemRequestAttributes)
                 .withTableName(PREFIX + TABLES_TABLE_NAME + SUFFIX);
         GetItemResult getItemResult = client.getItem(getItemRequest);
-        return parseToTable(getItemResult.getItem());
+        return TableUtils.parseToTable(getItemResult.getItem());
     }
 
-    private Table parseToTable(Map<String, AttributeValue> item) {
-        Table table = new Table();
-        table.setId(Integer.parseInt(item.get("id").getN()));
-        table.setNumber(Integer.parseInt(item.get("number").getN()));
-        table.setPlaces(Integer.parseInt(item.get("places").getN()));
-        table.setIsVip(item.get("isVip").getBOOL());
-        table.setMinOrder(Integer.parseInt(item.get("minOrder").getN()));
-        System.out.println(getClass() + " 126 table " + table);
-        return table;
-    }
 
 }

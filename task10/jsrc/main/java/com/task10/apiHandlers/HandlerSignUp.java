@@ -25,27 +25,27 @@ public class HandlerSignUp implements BaseAPIHandler {
     @Override
     public APIGatewayProxyResponseEvent handlePost(APIGatewayProxyRequestEvent event) {
         try {
-            System.out.println(getClass() + " Event " + event);
+//            System.out.println(getClass() + " Event " + event);
             String body = event.getBody();
             SignUpRequestDto signUpRequestDto = objectMapper.readValue(body, SignUpRequestDto.class);
             String cognitoId = getListCognitoUserIdByPoolName();
-            System.out.println(getClass() + " CognitoId " + cognitoId);
+//            System.out.println(getClass() + " CognitoId " + cognitoId);
             if (cognitoId == null) {
                 createUserPoolIfNotExists(cognitoId);
             }
-            System.out.println(getClass() + " CognitoId " + cognitoId);
-//            AdminConfirmSignUpResponse user = createUser(signUpRequestDto, cognitoId);
+//            System.out.println(getClass() + " CognitoId " + cognitoId);
+////            AdminConfirmSignUpResponse user = createUser(signUpRequestDto, cognitoId);
             AdminCreateUserResponse user = createUser(signUpRequestDto, cognitoId);
-            System.out.println(getClass() + " user " + user);
+//            System.out.println(getClass() + " user " + user);
             if (user.sdkHttpResponse().isSuccessful()) {
-                System.out.println(getClass() + " user.sdkHttpResponse().isSuccessful() " + user.sdkHttpResponse().isSuccessful());
+//                System.out.println(getClass() + " user.sdkHttpResponse().isSuccessful() " + user.sdkHttpResponse().isSuccessful());
                 return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_OK);
             } else {
-                System.out.println(getClass() + " user.sdkHttpResponse().isSuccessful() " + user.sdkHttpResponse().isSuccessful());
+//                System.out.println(getClass() + " user.sdkHttpResponse().isSuccessful() " + user.sdkHttpResponse().isSuccessful());
                 return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_BAD_REQUEST);
             }
         } catch (Exception e) {
-            System.out.println(getClass() + " error " + e.getMessage());
+//            System.out.println(getClass() + " error " + e.getMessage());
             return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_BAD_REQUEST);
         }
     }
@@ -57,7 +57,7 @@ public class HandlerSignUp implements BaseAPIHandler {
                 .explicitAuthFlows(ExplicitAuthFlowsType.ADMIN_NO_SRP_AUTH)
                 .generateSecret(false)
                 .build());
-        System.out.println("Create user pool client. Response " + createUserPoolClientResponse);
+//        System.out.println("Create user pool client. Response " + createUserPoolClientResponse);
     }
 
     //        private void createUser(SignUpRequestDto signUpRequestDto, String cognitoId) {
@@ -103,8 +103,8 @@ public class HandlerSignUp implements BaseAPIHandler {
         String email = signUpRequestDto.getEmail();
         boolean isEmailValid = ValidateUserUtil.validateEmail(email);
         boolean isPasswordValid = ValidateUserUtil.validatePassword(email);
-        System.out.println(getClass() + "EMAIL " + email + " is valid " + isEmailValid);
-        System.out.println(getClass() + "PASSWROD " + email + " is valid " + isPasswordValid);
+//        System.out.println(getClass() + "EMAIL " + email + " is valid " + isEmailValid);
+//        System.out.println(getClass() + "PASSWROD " + email + " is valid " + isPasswordValid);
         if (!isEmailValid) {
             throw new InvalidPropertiesFormatException("Invalid email format");
         }
@@ -120,7 +120,7 @@ public class HandlerSignUp implements BaseAPIHandler {
                 .findFirst()
                 .map(UserPoolDescriptionType::id)
                 .orElse(null);
-        System.out.println(getClass() + " 109 " + cognitoPoolId);
+//        System.out.println(getClass() + " 109 " + cognitoPoolId);
         return cognitoPoolId;
     }
 

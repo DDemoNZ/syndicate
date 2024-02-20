@@ -30,26 +30,26 @@ public class HandlerSignIn implements BaseAPIHandler {
     @Override
     public APIGatewayProxyResponseEvent handlePost(APIGatewayProxyRequestEvent event) {
         try {
-            System.out.println(getClass() + " " + event.getPath() + " " + event.getResource());
+//            System.out.println(getClass() + " " + event.getPath() + " " + event.getResource());
             SignInRequestDto signInRequestDto = objectMapper.readValue(event.getBody(), SignInRequestDto.class);
-            System.out.println(getClass() + " " + "signInRequestDto " + signInRequestDto.toString());
+//            System.out.println(getClass() + " " + "signInRequestDto " + signInRequestDto.toString());
             String cognitoId = getListCognitoUserIdByPoolName();
-            System.out.println(getClass() + " " + "cognitoId " + cognitoId);
+//            System.out.println(getClass() + " " + "cognitoId " + cognitoId);
             AdminInitiateAuthResponse adminInitiateAuthResponse = authenticateUser(signInRequestDto, cognitoId);
-//            SignInResponseDto responseDto = new SignInResponseDto(adminInitiateAuthResponse.authenticationResult().accessToken());
-            System.out.println(getClass() + " " + "adminInitiateAuthResponse.toString() " + adminInitiateAuthResponse.toString());
+////            SignInResponseDto responseDto = new SignInResponseDto(adminInitiateAuthResponse.authenticationResult().accessToken());
+//            System.out.println(getClass() + " " + "adminInitiateAuthResponse.toString() " + adminInitiateAuthResponse.toString());
             if (adminInitiateAuthResponse.sdkHttpResponse().isSuccessful()) {
                 SignInResponseDto responseDto = new SignInResponseDto(adminInitiateAuthResponse.authenticationResult().idToken());
-                System.out.println(getClass() + "user.sdkHttpResponse().isSuccessful() " + adminInitiateAuthResponse.sdkHttpResponse().isSuccessful());
-                System.out.println(getClass() + "responseDto " + responseDto);
+//                System.out.println(getClass() + "user.sdkHttpResponse().isSuccessful() " + adminInitiateAuthResponse.sdkHttpResponse().isSuccessful());
+//                System.out.println(getClass() + "responseDto " + responseDto);
                 return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_OK).withBody(objectMapper.writeValueAsString(responseDto));
             } else {
-                System.out.println(getClass() + "user.sdkHttpResponse().isSuccessful() " + adminInitiateAuthResponse.sdkHttpResponse().isSuccessful());
+//                System.out.println(getClass() + "user.sdkHttpResponse().isSuccessful() " + adminInitiateAuthResponse.sdkHttpResponse().isSuccessful());
                 return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_BAD_REQUEST);
             }
         } catch (Exception e) {
-            System.out.println(getClass() + "ERROR SIGN IN" + e.getMessage());
-            e.printStackTrace();
+//            System.out.println(getClass() + "ERROR SIGN IN" + e.getMessage());
+//            e.printStackTrace();
             return new APIGatewayProxyResponseEvent().withStatusCode(HttpStatus.SC_BAD_REQUEST);
         }
     }
@@ -58,8 +58,8 @@ public class HandlerSignIn implements BaseAPIHandler {
         HashMap<String, String> authParameters = new HashMap<>();
         authParameters.put("USERNAME", event.getEmail());
         authParameters.put("PASSWORD", event.getPassword());
-        System.out.println(getClass() + " 60 " + authParameters);
-        System.out.println(getClass() + " 61 " + event);
+//        System.out.println(getClass() + " 60 " + authParameters);
+//        System.out.println(getClass() + " 61 " + event);
         return cognitoClient.adminInitiateAuth(AdminInitiateAuthRequest.builder()
                 .userPoolId(cognitoId)
 //                .authFlow(AuthFlowType.ADMIN_USER_PASSWORD_AUTH)
@@ -96,13 +96,13 @@ public class HandlerSignIn implements BaseAPIHandler {
 //        String cognitoUserPoolId = filteredList.stream().findFirst().orElse(null);
 //        System.out.println(getClass() + " cognitoUserPoolId " + cognitoUserPoolId);
         ListUserPoolsResponse listUserPoolsResponse = cognitoClient.listUserPools(ListUserPoolsRequest.builder().build());
-        System.out.println(getClass() + " listUserPoolsResponse.toString() " + listUserPoolsResponse.toString());
+//        System.out.println(getClass() + " listUserPoolsResponse.toString() " + listUserPoolsResponse.toString());
         List<UserPoolDescriptionType> userPools = listUserPoolsResponse.userPools();
-        System.out.println(getClass() + " userPools " + userPools.toString());
+//        System.out.println(getClass() + " userPools " + userPools.toString());
         List<UserPoolDescriptionType> filteredPool = userPools.stream().filter(pool -> (PREFIX + COGNITO_POOL_NAME + SUFFIX).equals(pool.name())).collect(Collectors.toList());
-        System.out.println(getClass() + " filteredList " + filteredPool.toString());
+//        System.out.println(getClass() + " filteredList " + filteredPool.toString());
         String cognitoUserPoolId = filteredPool.stream().map(UserPoolDescriptionType::id).findFirst().orElse(null);
-        System.out.println(getClass() + " cognitoUserPoolId " + cognitoUserPoolId);
+//        System.out.println(getClass() + " cognitoUserPoolId " + cognitoUserPoolId);
         return cognitoUserPoolId;
     }
     

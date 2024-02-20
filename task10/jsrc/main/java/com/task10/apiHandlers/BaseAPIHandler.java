@@ -14,9 +14,7 @@ public interface BaseAPIHandler {
 
     default APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent requestEvent) throws NoSuchMethodException {
         if (HTTP_METHOD_GET.equals(requestEvent.getHttpMethod())) {
-            System.out.println(getClass() + "requestEvent.getResource() " + requestEvent.getResource());
-            System.out.println(getClass() + "requestEvent.getHttpMethod() " + requestEvent.getHttpMethod());
-            System.out.println(getClass() + "requestEvent.getHttpMethod() " + requestEvent.getPath());
+            System.out.println(getClass() + "requestEvent.getResource() " + requestEvent.getResource()  + "requestEvent.getHttpMethod() " + requestEvent.getHttpMethod() + "requestEvent.getHttpMethod() " + requestEvent.getPath());
             System.out.println(getClass() + " request with attributes " + REQUEST_WITH_ATTRIBUTES_MATCHER.matcher(requestEvent.getPath()).matches());
             Map<String, String> attributesMap1 = requestEvent.getPathParameters();
             System.out.println(getClass() + " attributes1 " + attributesMap1);

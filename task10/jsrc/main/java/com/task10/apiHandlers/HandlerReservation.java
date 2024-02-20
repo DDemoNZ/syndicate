@@ -9,7 +9,9 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.task10.models.ReservationResponseDto;
 import com.task10.models.ReservationsRequestDto;
+import com.task10.models.Table;
 import com.task10.utils.DynamoDBUtils;
+import com.task10.utils.TableUtils;
 import lombok.Data;
 import org.apache.http.HttpStatus;
 
@@ -46,6 +48,7 @@ public class HandlerReservation implements BaseAPIHandler {
             System.out.println(getClass() + " 40 reservationsDto " + reservationsRequestDto);
             Map<String, AttributeValue> reservationPutItem = getReservationPutItem(reservationsRequestDto);
             System.out.println(getClass() + " 42 reservationPutItem " + reservationPutItem);
+            checkIfNeededTableExists(reservationsRequestDto);
             checkReservationOverlap(reservationsRequestDto);
             PutItemResult putItemResult = client.putItem(PREFIX + RESERVATIONS_TABLE_NAME + SUFFIX, reservationPutItem);
             System.out.println(getClass() + " 44 putItemResult " + putItemResult);
@@ -106,6 +109,7 @@ public class HandlerReservation implements BaseAPIHandler {
     }
 
     private ReservationsRequestDto mapFromItemToReservation(Map<String, AttributeValue> reservation) {
+        System.out.println(getClass() + " 112 mapFromItemToReservation " + reservation);
         ReservationsRequestDto reservationsRequestDto = new ReservationsRequestDto();
         reservationsRequestDto.setId(reservation.get(ID).getS());
         reservationsRequestDto.setTableNumber(Integer.parseInt(reservation.get(TABLE_NUMBER).getN()));
@@ -118,16 +122,17 @@ public class HandlerReservation implements BaseAPIHandler {
         return reservationsRequestDto;
     }
 
-
     private void checkReservationOverlap(ReservationsRequestDto newReservation) {
-        client.scan(new ScanRequest()
+        List<ReservationsRequestDto> reservations = client.scan(new ScanRequest()
                         .withTableName(PREFIX + RESERVATIONS_TABLE_NAME + SUFFIX))
                 .getItems().stream()
                 .map(this::mapToReservation)
-                .filter(reservation -> checkOverlap(reservation, newReservation))
+                .filter(reservation -> checkOverlap(reservation, newReservation)).collect(Collectors.toList());
+        System.out.println(getClass() + " 131 with overlap " + reservations);
+        reservations.stream()
                 .findAny()
                 .ifPresent(reservation -> {
-                    throw new IllegalArgumentException("Overlap found with existing reservation: " + reservation);
+                    throw new IllegalArgumentException("Overlap found with existing reservation: " + reservation + " new reservation: " + newReservation);
                 });
     }
 
@@ -157,5 +162,18 @@ public class HandlerReservation implements BaseAPIHandler {
         reservationsRequestDto.setSlotTimeStart(reservationAttributeValueMap.get(SLOT_TIME_START).getS());
         reservationsRequestDto.setSlotTimeEnd(reservationAttributeValueMap.get(SLOT_TIME_END).getS());
         return reservationsRequestDto;
+    }
+
+    private void checkIfNeededTableExists(ReservationsRequestDto reservationsRequestDto) {
+        List<Table> tables = client.scan(new ScanRequest().withTableName(PREFIX + TABLES_TABLE_NAME + SUFFIX))
+                .getItems().stream()
+                .map(TableUtils::parseToTable).collect(Collectors.toList());
+        System.out.println(getClass() + " 166 tables stored " + tables);
+        System.out.println(getClass() + " 167 reservation to store " + reservationsRequestDto);
+        Table table1 = tables.stream()
+                .filter(table -> table.getNumber() == reservationsRequestDto.getTableNumber())
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("Needed table for reservation is not found: " + reservationsRequestDto));
+        System.out.println(getClass() + " 175 needed table found? " + table1);
     }
 }
